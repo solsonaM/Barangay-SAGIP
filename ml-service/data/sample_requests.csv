@@ -1,0 +1,379 @@
+text,category,urgency,base_template
+Good day po. tumataas nang mabilis ang tubig sa creek malapit sa amin Sana matulungan niyo kami.,disaster,high,disaster_high_1
+Mano po. may naaamoy na sunog pero di na makita kung saan galing,fire,average,fire_average_1
+Mano po. may nakita kaming kahina-hinalang tao na umaakyat sa bakod ng kapitbahay Sana matulungan niyo kami.,peace_order,high,peace_order_high_1
+Tulong po. may naaamoy na sunog pero di na makita kung saan galing Sana matulungan niyo kami.,fire,average,fire_average_1
+"Hi po, unconscious po siya at hindi gumagalaw, kailangan ng ambulansya agad Sana matulungan niyo kami.",medical,critical,medical_critical_1
+"Mano po. nagkaroon ng seizure at hindi na natitigan ang mata, kailangan ng ambulansya ngayon din Pakitingnan po agad.",medical,critical,medical_critical_5
+Bar. pwede po ba mahingi ng gamot para sa ubo Salamat po.,medical,average,medical_average_0
+Good day po. paano po mag-avail ng senior citizen discount sa gamot Sana matulungan niyo kami.,medical,low,medical_low_3
+Bar. meron po bang dental mission dito sa amin Sana matulungan niyo kami.,medical,low,medical_low_2
+Good day po. paano po mag-avail ng senior citizen discount sa gamot Salamat po.,medical,low,medical_low_3
+"Mano po. malakas ang hangin at ulan, natatakot kami baka bumagsak ang puno Pakitingnan po agad.",disaster,high,disaster_high_0
+"unconscious po siya at hindi gumagalaw, kailangan ng ambulansya agad Pakitingnan po agad.",medical,critical,medical_critical_1
+Bar. kailan po ang schedule ng check-up sa barangay health center Sana matulungan niyo kami.,medical,low,medical_low_1
+Bar. pwede po ba magpatulong sa usapin ng hangganan ng lupa namin,peace_order,low,peace_order_low_0
+Tulong po. hirap huminga ang lola ko pero kumakausap pa naman,medical,high,medical_high_3
+Bar. may taong may dalang baril at nananakot sa amin ngayon Sana matulungan niyo kami.,peace_order,critical,peace_order_critical_0
+Mano po. paano po humingi ng fire extinguisher para sa aming sari-sari store Pakitingnan po agad.,fire,low,fire_low_1
+Mano po. tanong lang po kung meron kayong fire safety seminar Sana matulungan niyo kami.,fire,low,fire_low_0
+"Good day po. nagkaroon ng seizure at hindi na natitigan ang mata, kailangan ng ambulansya ngayon din Sana matulungan niyo kami.",medical,critical,medical_critical_5
+"Bar. tulong po, hindi na humihinga ang lolo ko Sana matulungan niyo kami.",medical,critical,medical_critical_0
+Bar. may holdaper na may hawak na patalim sa may tindahan,peace_order,critical,peace_order_critical_2
+Mano po. may bumagsak na malaking puno malapit sa mga bahay,disaster,high,disaster_high_2
+"gumuho po ang bahay dahil sa lindol, may nakulong sa loob Sana matulungan niyo kami.",disaster,critical,disaster_critical_1
+sumasakit ng husto ang tiyan ng kapitbahay namin Pakitingnan po agad.,medical,high,medical_high_1
+paano po mag-apply ng barangay clearance Pakitingnan po agad.,general_assistance,low,general_assistance_low_0
+Bar. pwede po ba magpatulong sa usapin ng hangganan ng lupa namin Pakitingnan po agad.,peace_order,low,peace_order_low_0
+Bar. meron po bang tulong pang-relief goods available ngayon,general_assistance,average,general_assistance_average_1
+"Bar. may lagnat na mataas ang anak ko, sumusuka na rin Pakitingnan po agad.",medical,high,medical_high_0
+"Hi po, paano po mag-apply ng barangay clearance Pakitingnan po agad.",general_assistance,low,general_assistance_low_0
+"may nasusunog na bahay malapit sa amin, tumulong kayo agad Sana matulungan niyo kami.",fire,critical,fire_critical_1
+"Tulong po. malakas na landslide sa likod ng bahay namin, natatakot kaming lumabas Salamat po.",disaster,critical,disaster_critical_3
+"Mano po. tulong po, hindi na humihinga ang lolo ko Pakitingnan po agad.",medical,critical,medical_critical_0
+"Good day po. unconscious po siya at hindi gumagalaw, kailangan ng ambulansya agad Sana matulungan niyo kami.",medical,critical,medical_critical_1
+"Bar. nadapa ang matanda, parang nabali ang binti niya",medical,high,medical_high_2
+Mano po. paano po mag-avail ng senior citizen discount sa gamot Pakitingnan po agad.,medical,low,medical_low_3
+"Hi po, tanong ko lang kung may typhoon signal ba ngayon dito Salamat po.",disaster,low,disaster_low_0
+"Good day po. may motor na naiwan sa kalye ng ilang araw na, baka nakaw Salamat po.",peace_order,average,peace_order_average_1
+"Mano po. bumabaha na po nang husto dito, tumataas na ang tubig sa bahay namin Pakitingnan po agad.",disaster,critical,disaster_critical_0
+Good day po. sumasakit ng husto ang tiyan ng kapitbahay namin Pakitingnan po agad.,medical,high,medical_high_1
+tanong lang po kung meron kayong fire safety seminar Pakitingnan po agad.,fire,low,fire_low_0
+"Hi po, pwede po ba humingi ng tulong sa barangay para sa burial assistance Pakitingnan po agad.",general_assistance,average,general_assistance_average_0
+"Tulong po. may nag-aaway gamit ang kutsilyo sa kalye, may nasaktan na",peace_order,critical,peace_order_critical_1
+"Hi po, gumuho po ang bahay dahil sa lindol, may nakulong sa loob Sana matulungan niyo kami.",disaster,critical,disaster_critical_1
+"Mano po. amoy paso po sa kanto, pakitingnan naman Sana matulungan niyo kami.",fire,average,fire_average_0
+"Good day po. tinangay ng baha ang bata, kailangan agad ng rescue Salamat po.",disaster,critical,disaster_critical_2
+"Tulong po. may sugat na malalim sa binti, dumudugo pa rin",medical,high,medical_high_4
+Bar. meron po bang evacuation drill sa barangay this month Salamat po.,disaster,low,disaster_low_1
+Bar. anong oras po nagbubukas ang barangay hall tuwing sabado Sana matulungan niyo kami.,general_assistance,low,general_assistance_low_3
+"Good day po. tulong po, hindi na humihinga ang lolo ko Salamat po.",medical,critical,medical_critical_0
+"Mano po. chest pain at hirap huminga ang asawa ko, nanganganib mabuhay Sana matulungan niyo kami.",medical,critical,medical_critical_3
+Good day po. tanong ko lang kung may typhoon signal ba ngayon dito Sana matulungan niyo kami.,disaster,low,disaster_low_0
+"Hi po, meron po bang evacuation drill sa barangay this month Sana matulungan niyo kami.",disaster,low,disaster_low_1
+Good day po. hirap huminga ang lola ko pero kumakausap pa naman,medical,high,medical_high_3
+"Bar. nalunod po ang bata sa ilog, hindi humihinga Salamat po.",medical,critical,medical_critical_4
+"Good day po. may nagnanakaw daw sa aming kalye, pakisuyo tingnan Salamat po.",peace_order,average,peace_order_average_0
+"Bar. sunog po sa bahay namin, malaki na ang apoy Sana matulungan niyo kami.",fire,critical,fire_critical_0
+Good day po. meron po bang dental mission dito sa amin Sana matulungan niyo kami.,medical,low,medical_low_2
+Good day po. tanong ko lang po kung may libreng bakuna ngayong linggo Pakitingnan po agad.,medical,low,medical_low_0
+Bar. walang matulugan ang pamilya namin ngayong gabi dahil sa sunog kahapon,general_assistance,high,general_assistance_high_1
+"Good day po. may sumisigaw na away sa kabilang kalye, tumataas na boses Pakitingnan po agad.",peace_order,high,peace_order_high_2
+Bar. tumataas nang mabilis ang tubig sa creek malapit sa amin,disaster,high,disaster_high_1
+Mano po. meron po bang tulong pang-relief goods available ngayon Pakitingnan po agad.,general_assistance,average,general_assistance_average_1
+"sumasakit ang ulo niya mula kagabi, di naman sobra Sana matulungan niyo kami.",medical,average,medical_average_3
+Good day po. saan po pwede kumuha ng business permit dito sa barangay Sana matulungan niyo kami.,general_assistance,low,general_assistance_low_2
+tanong ko lang kung may typhoon signal ba ngayon dito Salamat po.,disaster,low,disaster_low_0
+"Tulong po. amoy paso po sa kanto, pakitingnan naman Salamat po.",fire,average,fire_average_0
+Mano po. pwede po ba mahingi ng gamot para sa ubo,medical,average,medical_average_0
+Good day po. meron po bang evacuation drill sa barangay this month Pakitingnan po agad.,disaster,low,disaster_low_1
+"Tulong po. unconscious po siya at hindi gumagalaw, kailangan ng ambulansya agad Salamat po.",medical,critical,medical_critical_1
+may holdaper na may hawak na patalim sa may tindahan,peace_order,critical,peace_order_critical_2
+Bar. kailangan namin ng tulong pang-ayuda dahil nawalan ng trabaho ang tatay ko,general_assistance,average,general_assistance_average_2
+Good day po. paano po mag-apply ng barangay clearance Salamat po.,general_assistance,low,general_assistance_low_0
+Good day po. tanong ko lang po kung may libreng bakuna ngayong linggo Sana matulungan niyo kami.,medical,low,medical_low_0
+"Hi po, sumasakit ng husto ang tiyan ng kapitbahay namin Salamat po.",medical,high,medical_high_1
+Good day po. meron po bang evacuation drill sa barangay this month,disaster,low,disaster_low_1
+Good day po. may taong may dalang baril at nananakot sa amin ngayon Pakitingnan po agad.,peace_order,critical,peace_order_critical_0
+Bar. tanong ko lang po kung may libreng bakuna ngayong linggo Pakitingnan po agad.,medical,low,medical_low_0
+"Hi po, may nag-iingay at lasing na tao sa labas ng bahay namin, nakakatakot na",peace_order,high,peace_order_high_0
+"Bar. nadapa ang matanda, parang nabali ang binti niya Salamat po.",medical,high,medical_high_2
+"Hi po, may sugat lang po pero hindi na dumudugo, pakitingnan na lang Sana matulungan niyo kami.",medical,average,medical_average_2
+Tulong po. kailangan namin ng tulong pang-ayuda dahil nawalan ng trabaho ang tatay ko,general_assistance,average,general_assistance_average_2
+"Good day po. may lagnat na mataas ang anak ko, sumusuka na rin",medical,high,medical_high_0
+may nakikitang liyab sa likod ng bahay ng kapitbahay Salamat po.,fire,high,fire_high_2
+Bar. hirap huminga ang lola ko pero kumakausap pa naman,medical,high,medical_high_3
+"Good day po. sunog po sa bahay namin, malaki na ang apoy Salamat po.",fire,critical,fire_critical_0
+Bar. meron po bang tulong pang-relief goods available ngayon Pakitingnan po agad.,general_assistance,average,general_assistance_average_1
+"Mano po. may sugat na malalim sa binti, dumudugo pa rin Sana matulungan niyo kami.",medical,high,medical_high_4
+"nalunod po ang bata sa ilog, hindi humihinga Salamat po.",medical,critical,medical_critical_4
+paano po humingi ng fire extinguisher para sa aming sari-sari store Salamat po.,fire,low,fire_low_1
+"Bar. malakas na landslide sa likod ng bahay namin, natatakot kaming lumabas Salamat po.",disaster,critical,disaster_critical_3
+"Good day po. bumabaha na po nang husto dito, tumataas na ang tubig sa bahay namin Pakitingnan po agad.",disaster,critical,disaster_critical_0
+Tulong po. tanong ko lang po kung may libreng bakuna ngayong linggo Pakitingnan po agad.,medical,low,medical_low_0
+"Hi po, nagkaroon ng seizure at hindi na natitigan ang mata, kailangan ng ambulansya ngayon din Sana matulungan niyo kami.",medical,critical,medical_critical_5
+"Hi po, malakas na landslide sa likod ng bahay namin, natatakot kaming lumabas Salamat po.",disaster,critical,disaster_critical_3
+"Bar. amoy paso po sa kanto, pakitingnan naman Salamat po.",fire,average,fire_average_0
+"Good day po. may motor na naiwan sa kalye ng ilang araw na, baka nakaw Pakitingnan po agad.",peace_order,average,peace_order_average_1
+"Tulong po. gumuho po ang bahay dahil sa lindol, may nakulong sa loob Salamat po.",disaster,critical,disaster_critical_1
+"Tulong po. tulong po, hindi na humihinga ang lolo ko Pakitingnan po agad.",medical,critical,medical_critical_0
+Tulong po. pwede po ba humingi ng tulong sa barangay para sa burial assistance Sana matulungan niyo kami.,general_assistance,average,general_assistance_average_0
+"Hi po, may nasusunog na bahay malapit sa amin, tumulong kayo agad Salamat po.",fire,critical,fire_critical_1
+Good day po. may holdaper na may hawak na patalim sa may tindahan Sana matulungan niyo kami.,peace_order,critical,peace_order_critical_2
+Good day po. paano po mag-apply ng barangay clearance,general_assistance,low,general_assistance_low_0
+Good day po. kailan po ang schedule ng check-up sa barangay health center,medical,low,medical_low_1
+"Tulong po. bumabaha na po nang husto dito, tumataas na ang tubig sa bahay namin Pakitingnan po agad.",disaster,critical,disaster_critical_0
+"Hi po, may sirang poste ng kuryente dahil sa bagyo kahapon Pakitingnan po agad.",disaster,average,disaster_average_0
+"Mano po. may usok na lumalabas sa kalapit bahay, baka may sunog Salamat po.",fire,high,fire_high_0
+"may nag-iingay at lasing na tao sa labas ng bahay namin, nakakatakot na Pakitingnan po agad.",peace_order,high,peace_order_high_0
+"Hi po, may nag-aaway gamit ang kutsilyo sa kalye, may nasaktan na Pakitingnan po agad.",peace_order,critical,peace_order_critical_1
+"Hi po, nahihilo at nanghihina ang buntis, kailangan dalhin sa ospital",medical,high,medical_high_5
+meron po bang evacuation drill sa barangay this month Pakitingnan po agad.,disaster,low,disaster_low_1
+"Hi po, may nasusunog na bahay malapit sa amin, tumulong kayo agad Sana matulungan niyo kami.",fire,critical,fire_critical_1
+ano po ang requirements para sa indigency certificate Pakitingnan po agad.,general_assistance,low,general_assistance_low_1
+Bar. ano po ang requirements para sa indigency certificate Sana matulungan niyo kami.,general_assistance,low,general_assistance_low_1
+Tulong po. pwede po ba magpatulong sa usapin ng hangganan ng lupa namin,peace_order,low,peace_order_low_0
+"Tulong po. may nasusunog na bahay malapit sa amin, tumulong kayo agad Salamat po.",fire,critical,fire_critical_1
+"Good day po. may sugat na malalim sa binti, dumudugo pa rin",medical,high,medical_high_4
+"may nagnanakaw daw sa aming kalye, pakisuyo tingnan",peace_order,average,peace_order_average_0
+Mano po. may sirang poste ng kuryente dahil sa bagyo kahapon Sana matulungan niyo kami.,disaster,average,disaster_average_0
+Tulong po. tanong ko lang po kung may libreng bakuna ngayong linggo,medical,low,medical_low_0
+"Tulong po. may sugat na malalim sa binti, dumudugo pa rin Sana matulungan niyo kami.",medical,high,medical_high_4
+"amoy paso po sa kanto, pakitingnan naman Pakitingnan po agad.",fire,average,fire_average_0
+"Good day po. may motor na naiwan sa kalye ng ilang araw na, baka nakaw Sana matulungan niyo kami.",peace_order,average,peace_order_average_1
+"severe bleeding po sa sugat, kailangan agad ng tulong medikal",medical,critical,medical_critical_2
+"Mano po. may usok na lumalabas sa kalapit bahay, baka may sunog Sana matulungan niyo kami.",fire,high,fire_high_0
+"Good day po. kumakalat na ang apoy sa mga kalapit bahay, kailangan ng bumbero ngayon Salamat po.",fire,critical,fire_critical_2
+"Bar. sobrang laki ng dugo na lumalabas sa sugat niya, mamamatay na po siya",medical,critical,medical_critical_6
+"Hi po, may motor na naiwan sa kalye ng ilang araw na, baka nakaw",peace_order,average,peace_order_average_1
+"Tulong po. tinangay ng baha ang bata, kailangan agad ng rescue",disaster,critical,disaster_critical_2
+"Hi po, nagkaroon ng seizure at hindi na natitigan ang mata, kailangan ng ambulansya ngayon din Salamat po.",medical,critical,medical_critical_5
+"Hi po, nadapa ang matanda, parang nabali ang binti niya Salamat po.",medical,high,medical_high_2
+Good day po. sumasakit ng husto ang tiyan ng kapitbahay namin Sana matulungan niyo kami.,medical,high,medical_high_1
+"Hi po, malakas ang hangin at ulan, natatakot kami baka bumagsak ang puno",disaster,high,disaster_high_0
+Tulong po. paano po humingi ng fire extinguisher para sa aming sari-sari store Salamat po.,fire,low,fire_low_1
+Good day po. may baradong kanal na sanhi ng pagbaha sa amin tuwing umuulan Sana matulungan niyo kami.,disaster,average,disaster_average_1
+"Hi po, anong oras po nagbubukas ang barangay hall tuwing sabado Salamat po.",general_assistance,low,general_assistance_low_3
+"Mano po. sumasabog ang gasul sa kusina at may apoy na, tulungan niyo kami Pakitingnan po agad.",fire,critical,fire_critical_3
+"Tulong po. kumakalat na ang apoy sa mga kalapit bahay, kailangan ng bumbero ngayon",fire,critical,fire_critical_2
+"Bar. tulong po, hindi na humihinga ang lolo ko Salamat po.",medical,critical,medical_critical_0
+"Hi po, may sugat lang po pero hindi na dumudugo, pakitingnan na lang Salamat po.",medical,average,medical_average_2
+Good day po. anong oras po nagbubukas ang barangay hall tuwing sabado Pakitingnan po agad.,general_assistance,low,general_assistance_low_3
+"Hi po, kailangan po namin ng tulong dahil naiwan kami ng byahe at wala nang pambili ng gamot Pakitingnan po agad.",general_assistance,high,general_assistance_high_0
+"Hi po, saan po pwede kumuha ng business permit dito sa barangay Salamat po.",general_assistance,low,general_assistance_low_2
+"Hi po, tanong lang po kung meron kayong fire safety seminar Sana matulungan niyo kami.",fire,low,fire_low_0
+"Tulong po. nagkaroon ng seizure at hindi na natitigan ang mata, kailangan ng ambulansya ngayon din Salamat po.",medical,critical,medical_critical_5
+"Tulong po. may motor na naiwan sa kalye ng ilang araw na, baka nakaw Sana matulungan niyo kami.",peace_order,average,peace_order_average_1
+"Hi po, sumasakit ang ulo niya mula kagabi, di naman sobra Sana matulungan niyo kami.",medical,average,medical_average_3
+"Mano po. kumakalat na ang apoy sa mga kalapit bahay, kailangan ng bumbero ngayon",fire,critical,fire_critical_2
+"Bar. may sumisigaw na away sa kabilang kalye, tumataas na boses",peace_order,high,peace_order_high_2
+"Good day po. malakas ang hangin at ulan, natatakot kami baka bumagsak ang puno Sana matulungan niyo kami.",disaster,high,disaster_high_0
+"Tulong po. nagkaroon ng seizure at hindi na natitigan ang mata, kailangan ng ambulansya ngayon din Sana matulungan niyo kami.",medical,critical,medical_critical_5
+"Bar. sumasakit ang ulo niya mula kagabi, di naman sobra Pakitingnan po agad.",medical,average,medical_average_3
+"Hi po, may nakita kaming kahina-hinalang tao na umaakyat sa bakod ng kapitbahay Salamat po.",peace_order,high,peace_order_high_1
+Bar. tanong ko lang kung may typhoon signal ba ngayon dito Salamat po.,disaster,low,disaster_low_0
+Bar. may baradong kanal na sanhi ng pagbaha sa amin tuwing umuulan,disaster,average,disaster_average_1
+"Good day po. sumasabog ang gasul sa kusina at may apoy na, tulungan niyo kami Salamat po.",fire,critical,fire_critical_3
+"Bar. chest pain at hirap huminga ang asawa ko, nanganganib mabuhay Salamat po.",medical,critical,medical_critical_3
+"Hi po, may nag-aaway gamit ang kutsilyo sa kalye, may nasaktan na Salamat po.",peace_order,critical,peace_order_critical_1
+"Hi po, may taong may dalang baril at nananakot sa amin ngayon",peace_order,critical,peace_order_critical_0
+"Bar. may nag-aaway gamit ang kutsilyo sa kalye, may nasaktan na Pakitingnan po agad.",peace_order,critical,peace_order_critical_1
+Mano po. hirap huminga ang lola ko pero kumakausap pa naman Pakitingnan po agad.,medical,high,medical_high_3
+Bar. pwede po ba humingi ng tulong sa barangay para sa burial assistance,general_assistance,average,general_assistance_average_0
+"Mano po. sinasaktan ng lalaki ang asawa niya ngayon, sumisigaw siya ng tulong Salamat po.",peace_order,critical,peace_order_critical_3
+"Tulong po. kumakalat na ang apoy sa mga kalapit bahay, kailangan ng bumbero ngayon Salamat po.",fire,critical,fire_critical_2
+"Tulong po. nalunod po ang bata sa ilog, hindi humihinga Salamat po.",medical,critical,medical_critical_4
+Good day po. need po sana ng first aid kit dito sa amin Sana matulungan niyo kami.,medical,average,medical_average_1
+"Good day po. severe bleeding po sa sugat, kailangan agad ng tulong medikal Sana matulungan niyo kami.",medical,critical,medical_critical_2
+Good day po. need po sana ng first aid kit dito sa amin Salamat po.,medical,average,medical_average_1
+Tulong po. paano po humingi ng fire extinguisher para sa aming sari-sari store,fire,low,fire_low_1
+"Mano po. may sumisigaw na away sa kabilang kalye, tumataas na boses",peace_order,high,peace_order_high_2
+"Mano po. severe bleeding po sa sugat, kailangan agad ng tulong medikal Pakitingnan po agad.",medical,critical,medical_critical_2
+"Bar. may usok na lumalabas sa kalapit bahay, baka may sunog Salamat po.",fire,high,fire_high_0
+"tinangay ng baha ang bata, kailangan agad ng rescue Pakitingnan po agad.",disaster,critical,disaster_critical_2
+Mano po. kailangan po namin ng tulong dahil naiwan kami ng byahe at wala nang pambili ng gamot Pakitingnan po agad.,general_assistance,high,general_assistance_high_0
+"Hi po, pwede po ba humingi ng tulong sa barangay para sa burial assistance Salamat po.",general_assistance,average,general_assistance_average_0
+"Tulong po. nahihilo at nanghihina ang buntis, kailangan dalhin sa ospital Pakitingnan po agad.",medical,high,medical_high_5
+"Good day po. may sugat lang po pero hindi na dumudugo, pakitingnan na lang Sana matulungan niyo kami.",medical,average,medical_average_2
+"Good day po. may sugat lang po pero hindi na dumudugo, pakitingnan na lang Pakitingnan po agad.",medical,average,medical_average_2
+"Hi po, malakas na landslide sa likod ng bahay namin, natatakot kaming lumabas",disaster,critical,disaster_critical_3
+Good day po. nag-iinit ng husto ang de-koryenteng gamit at may umuusok,fire,high,fire_high_1
+"Mano po. may nasusunog na bahay malapit sa amin, tumulong kayo agad",fire,critical,fire_critical_1
+"Bar. may nasusunog na bahay malapit sa amin, tumulong kayo agad Sana matulungan niyo kami.",fire,critical,fire_critical_1
+"Hi po, paano po humingi ng fire extinguisher para sa aming sari-sari store",fire,low,fire_low_1
+Tulong po. paano po mag-file ng blotter report sa minor na sagutan,peace_order,low,peace_order_low_1
+Good day po. kailangan namin ng tulong pang-ayuda dahil nawalan ng trabaho ang tatay ko Salamat po.,general_assistance,average,general_assistance_average_2
+hirap huminga ang lola ko pero kumakausap pa naman Pakitingnan po agad.,medical,high,medical_high_3
+may holdaper na may hawak na patalim sa may tindahan Pakitingnan po agad.,peace_order,critical,peace_order_critical_2
+"may lagnat na mataas ang anak ko, sumusuka na rin",medical,high,medical_high_0
+"Tulong po. sinasaktan ng lalaki ang asawa niya ngayon, sumisigaw siya ng tulong Pakitingnan po agad.",peace_order,critical,peace_order_critical_3
+"Hi po, sinasaktan ng lalaki ang asawa niya ngayon, sumisigaw siya ng tulong Pakitingnan po agad.",peace_order,critical,peace_order_critical_3
+Mano po. may baradong kanal na sanhi ng pagbaha sa amin tuwing umuulan,disaster,average,disaster_average_1
+Mano po. tanong lang po kung meron kayong fire safety seminar,fire,low,fire_low_0
+"Hi po, tumataas nang mabilis ang tubig sa creek malapit sa amin",disaster,high,disaster_high_1
+ano po ang requirements para sa indigency certificate,general_assistance,low,general_assistance_low_1
+"may sumisigaw na away sa kabilang kalye, tumataas na boses Salamat po.",peace_order,high,peace_order_high_2
+Tulong po. anong oras po nagbubukas ang barangay hall tuwing sabado Pakitingnan po agad.,general_assistance,low,general_assistance_low_3
+"Bar. may nagnanakaw daw sa aming kalye, pakisuyo tingnan Pakitingnan po agad.",peace_order,average,peace_order_average_0
+"sunog po sa bahay namin, malaki na ang apoy Salamat po.",fire,critical,fire_critical_0
+paano po mag-avail ng senior citizen discount sa gamot Salamat po.,medical,low,medical_low_3
+Mano po. kailangan po namin ng tulong dahil naiwan kami ng byahe at wala nang pambili ng gamot,general_assistance,high,general_assistance_high_0
+"Mano po. may motor na naiwan sa kalye ng ilang araw na, baka nakaw Salamat po.",peace_order,average,peace_order_average_1
+Mano po. sumasakit ng husto ang tiyan ng kapitbahay namin Sana matulungan niyo kami.,medical,high,medical_high_1
+Bar. tumataas nang mabilis ang tubig sa creek malapit sa amin Pakitingnan po agad.,disaster,high,disaster_high_1
+"Hi po, sumasabog ang gasul sa kusina at may apoy na, tulungan niyo kami Pakitingnan po agad.",fire,critical,fire_critical_3
+Tulong po. may nakita kaming kahina-hinalang tao na umaakyat sa bakod ng kapitbahay Sana matulungan niyo kami.,peace_order,high,peace_order_high_1
+Bar. may bumagsak na malaking puno malapit sa mga bahay,disaster,high,disaster_high_2
+Bar. saan po pwede kumuha ng business permit dito sa barangay,general_assistance,low,general_assistance_low_2
+"Good day po. malakas na landslide sa likod ng bahay namin, natatakot kaming lumabas Salamat po.",disaster,critical,disaster_critical_3
+"Hi po, kumakalat na ang apoy sa mga kalapit bahay, kailangan ng bumbero ngayon Pakitingnan po agad.",fire,critical,fire_critical_2
+Mano po. pwede po ba magpatulong sa usapin ng hangganan ng lupa namin,peace_order,low,peace_order_low_0
+"Tulong po. malakas ang hangin at ulan, natatakot kami baka bumagsak ang puno Sana matulungan niyo kami.",disaster,high,disaster_high_0
+"Tulong po. sumasakit ang ulo niya mula kagabi, di naman sobra Salamat po.",medical,average,medical_average_3
+kailangan namin ng tulong pang-ayuda dahil nawalan ng trabaho ang tatay ko Sana matulungan niyo kami.,general_assistance,average,general_assistance_average_2
+"may usok na lumalabas sa kalapit bahay, baka may sunog",fire,high,fire_high_0
+Mano po. walang matulugan ang pamilya namin ngayong gabi dahil sa sunog kahapon Sana matulungan niyo kami.,general_assistance,high,general_assistance_high_1
+Bar. walang matulugan ang pamilya namin ngayong gabi dahil sa sunog kahapon Sana matulungan niyo kami.,general_assistance,high,general_assistance_high_1
+Good day po. may nakikitang liyab sa likod ng bahay ng kapitbahay Salamat po.,fire,high,fire_high_2
+"Tulong po. chest pain at hirap huminga ang asawa ko, nanganganib mabuhay Sana matulungan niyo kami.",medical,critical,medical_critical_3
+"nahihilo at nanghihina ang buntis, kailangan dalhin sa ospital Sana matulungan niyo kami.",medical,high,medical_high_5
+Mano po. meron po bang tulong pang-relief goods available ngayon Salamat po.,general_assistance,average,general_assistance_average_1
+"Tulong po. may sugat lang po pero hindi na dumudugo, pakitingnan na lang Pakitingnan po agad.",medical,average,medical_average_2
+"Mano po. may sumisigaw na away sa kabilang kalye, tumataas na boses Sana matulungan niyo kami.",peace_order,high,peace_order_high_2
+Mano po. ano po ang requirements para sa indigency certificate Sana matulungan niyo kami.,general_assistance,low,general_assistance_low_1
+meron po bang dental mission dito sa amin Sana matulungan niyo kami.,medical,low,medical_low_2
+Good day po. meron po bang dental mission dito sa amin,medical,low,medical_low_2
+"Hi po, ano po ang requirements para sa indigency certificate Salamat po.",general_assistance,low,general_assistance_low_1
+"Bar. chest pain at hirap huminga ang asawa ko, nanganganib mabuhay",medical,critical,medical_critical_3
+"Bar. sunog po sa bahay namin, malaki na ang apoy Pakitingnan po agad.",fire,critical,fire_critical_0
+"Hi po, paano po mag-file ng blotter report sa minor na sagutan",peace_order,low,peace_order_low_1
+"Good day po. severe bleeding po sa sugat, kailangan agad ng tulong medikal Salamat po.",medical,critical,medical_critical_2
+"Tulong po. may usok na lumalabas sa kalapit bahay, baka may sunog Sana matulungan niyo kami.",fire,high,fire_high_0
+Bar. kailangan po namin ng tulong dahil naiwan kami ng byahe at wala nang pambili ng gamot Pakitingnan po agad.,general_assistance,high,general_assistance_high_0
+"Hi po, may baradong kanal na sanhi ng pagbaha sa amin tuwing umuulan Sana matulungan niyo kami.",disaster,average,disaster_average_1
+"Mano po. nahihilo at nanghihina ang buntis, kailangan dalhin sa ospital",medical,high,medical_high_5
+nag-iinit ng husto ang de-koryenteng gamit at may umuusok Pakitingnan po agad.,fire,high,fire_high_1
+"Bar. malakas na landslide sa likod ng bahay namin, natatakot kaming lumabas",disaster,critical,disaster_critical_3
+"gumuho po ang bahay dahil sa lindol, may nakulong sa loob Salamat po.",disaster,critical,disaster_critical_1
+"Hi po, severe bleeding po sa sugat, kailangan agad ng tulong medikal",medical,critical,medical_critical_2
+Mano po. walang matulugan ang pamilya namin ngayong gabi dahil sa sunog kahapon Pakitingnan po agad.,general_assistance,high,general_assistance_high_1
+"Mano po. bumabaha na po nang husto dito, tumataas na ang tubig sa bahay namin",disaster,critical,disaster_critical_0
+Tulong po. paano po mag-apply ng barangay clearance Sana matulungan niyo kami.,general_assistance,low,general_assistance_low_0
+Tulong po. may sirang poste ng kuryente dahil sa bagyo kahapon,disaster,average,disaster_average_0
+"Hi po, may nag-iingay at lasing na tao sa labas ng bahay namin, nakakatakot na Salamat po.",peace_order,high,peace_order_high_0
+Mano po. pwede po ba mahingi ng gamot para sa ubo Pakitingnan po agad.,medical,average,medical_average_0
+saan po pwede kumuha ng business permit dito sa barangay Pakitingnan po agad.,general_assistance,low,general_assistance_low_2
+may nakikitang liyab sa likod ng bahay ng kapitbahay Sana matulungan niyo kami.,fire,high,fire_high_2
+Bar. may nakikitang liyab sa likod ng bahay ng kapitbahay Pakitingnan po agad.,fire,high,fire_high_2
+Good day po. paano po mag-file ng blotter report sa minor na sagutan Salamat po.,peace_order,low,peace_order_low_1
+"Hi po, may nakita kaming kahina-hinalang tao na umaakyat sa bakod ng kapitbahay Sana matulungan niyo kami.",peace_order,high,peace_order_high_1
+"Mano po. may nagnanakaw daw sa aming kalye, pakisuyo tingnan Pakitingnan po agad.",peace_order,average,peace_order_average_0
+Good day po. saan po pwede kumuha ng business permit dito sa barangay Pakitingnan po agad.,general_assistance,low,general_assistance_low_2
+Tulong po. meron po bang dental mission dito sa amin Salamat po.,medical,low,medical_low_2
+Mano po. may bumagsak na malaking puno malapit sa mga bahay Salamat po.,disaster,high,disaster_high_2
+Mano po. tanong ko lang kung may typhoon signal ba ngayon dito,disaster,low,disaster_low_0
+"sumasabog ang gasul sa kusina at may apoy na, tulungan niyo kami Pakitingnan po agad.",fire,critical,fire_critical_3
+Mano po. may taong may dalang baril at nananakot sa amin ngayon Salamat po.,peace_order,critical,peace_order_critical_0
+"Good day po. may nagnanakaw daw sa aming kalye, pakisuyo tingnan Pakitingnan po agad.",peace_order,average,peace_order_average_0
+Mano po. paano po mag-file ng blotter report sa minor na sagutan Sana matulungan niyo kami.,peace_order,low,peace_order_low_1
+"Bar. may sugat lang po pero hindi na dumudugo, pakitingnan na lang Sana matulungan niyo kami.",medical,average,medical_average_2
+"sobrang laki ng dugo na lumalabas sa sugat niya, mamamatay na po siya Salamat po.",medical,critical,medical_critical_6
+pwede po ba mahingi ng gamot para sa ubo,medical,average,medical_average_0
+Mano po. need po sana ng first aid kit dito sa amin,medical,average,medical_average_1
+"Hi po, sumasakit ang ulo niya mula kagabi, di naman sobra Pakitingnan po agad.",medical,average,medical_average_3
+"Good day po. sunog po sa bahay namin, malaki na ang apoy Sana matulungan niyo kami.",fire,critical,fire_critical_0
+"nahihilo at nanghihina ang buntis, kailangan dalhin sa ospital Pakitingnan po agad.",medical,high,medical_high_5
+Tulong po. sumasakit ng husto ang tiyan ng kapitbahay namin Pakitingnan po agad.,medical,high,medical_high_1
+Bar. paano po mag-avail ng senior citizen discount sa gamot Pakitingnan po agad.,medical,low,medical_low_3
+"Bar. nahihilo at nanghihina ang buntis, kailangan dalhin sa ospital",medical,high,medical_high_5
+Bar. may naaamoy na sunog pero di na makita kung saan galing Salamat po.,fire,average,fire_average_1
+Mano po. may naaamoy na sunog pero di na makita kung saan galing Salamat po.,fire,average,fire_average_1
+"Mano po. sumasakit ang ulo niya mula kagabi, di naman sobra Salamat po.",medical,average,medical_average_3
+"Good day po. tinangay ng baha ang bata, kailangan agad ng rescue",disaster,critical,disaster_critical_2
+Mano po. anong oras po nagbubukas ang barangay hall tuwing sabado Sana matulungan niyo kami.,general_assistance,low,general_assistance_low_3
+Tulong po. may bumagsak na malaking puno malapit sa mga bahay Sana matulungan niyo kami.,disaster,high,disaster_high_2
+"Bar. bumabaha na po nang husto dito, tumataas na ang tubig sa bahay namin Sana matulungan niyo kami.",disaster,critical,disaster_critical_0
+Good day po. kailangan namin ng tulong pang-ayuda dahil nawalan ng trabaho ang tatay ko,general_assistance,average,general_assistance_average_2
+Bar. need po sana ng first aid kit dito sa amin Salamat po.,medical,average,medical_average_1
+"Good day po. amoy paso po sa kanto, pakitingnan naman Sana matulungan niyo kami.",fire,average,fire_average_0
+Tulong po. kailan po ang schedule ng check-up sa barangay health center Salamat po.,medical,low,medical_low_1
+"amoy paso po sa kanto, pakitingnan naman",fire,average,fire_average_0
+Mano po. nag-iinit ng husto ang de-koryenteng gamit at may umuusok Pakitingnan po agad.,fire,high,fire_high_1
+walang matulugan ang pamilya namin ngayong gabi dahil sa sunog kahapon Pakitingnan po agad.,general_assistance,high,general_assistance_high_1
+"Hi po, sobrang laki ng dugo na lumalabas sa sugat niya, mamamatay na po siya Salamat po.",medical,critical,medical_critical_6
+"Tulong po. gumuho po ang bahay dahil sa lindol, may nakulong sa loob Sana matulungan niyo kami.",disaster,critical,disaster_critical_1
+Tulong po. may holdaper na may hawak na patalim sa may tindahan Salamat po.,peace_order,critical,peace_order_critical_2
+"Good day po. malakas ang hangin at ulan, natatakot kami baka bumagsak ang puno Salamat po.",disaster,high,disaster_high_0
+"Hi po, paano po mag-avail ng senior citizen discount sa gamot",medical,low,medical_low_3
+"Good day po. nadapa ang matanda, parang nabali ang binti niya",medical,high,medical_high_2
+Tulong po. walang matulugan ang pamilya namin ngayong gabi dahil sa sunog kahapon Salamat po.,general_assistance,high,general_assistance_high_1
+"Hi po, may lagnat na mataas ang anak ko, sumusuka na rin Sana matulungan niyo kami.",medical,high,medical_high_0
+Tulong po. tanong lang po kung meron kayong fire safety seminar,fire,low,fire_low_0
+may sirang poste ng kuryente dahil sa bagyo kahapon Salamat po.,disaster,average,disaster_average_0
+Good day po. need po sana ng first aid kit dito sa amin Pakitingnan po agad.,medical,average,medical_average_1
+Mano po. ano po ang requirements para sa indigency certificate Salamat po.,general_assistance,low,general_assistance_low_1
+"Hi po, unconscious po siya at hindi gumagalaw, kailangan ng ambulansya agad Salamat po.",medical,critical,medical_critical_1
+may bumagsak na malaking puno malapit sa mga bahay Sana matulungan niyo kami.,disaster,high,disaster_high_2
+Bar. meron po bang tulong pang-relief goods available ngayon Sana matulungan niyo kami.,general_assistance,average,general_assistance_average_1
+Mano po. meron po bang evacuation drill sa barangay this month Salamat po.,disaster,low,disaster_low_1
+"sinasaktan ng lalaki ang asawa niya ngayon, sumisigaw siya ng tulong Salamat po.",peace_order,critical,peace_order_critical_3
+Good day po. may holdaper na may hawak na patalim sa may tindahan Pakitingnan po agad.,peace_order,critical,peace_order_critical_2
+Bar. tumataas nang mabilis ang tubig sa creek malapit sa amin Sana matulungan niyo kami.,disaster,high,disaster_high_1
+"Tulong po. may nag-iingay at lasing na tao sa labas ng bahay namin, nakakatakot na",peace_order,high,peace_order_high_0
+Bar. may bumagsak na malaking puno malapit sa mga bahay Salamat po.,disaster,high,disaster_high_2
+Good day po. nag-iinit ng husto ang de-koryenteng gamit at may umuusok Salamat po.,fire,high,fire_high_1
+"Good day po. sobrang laki ng dugo na lumalabas sa sugat niya, mamamatay na po siya Sana matulungan niyo kami.",medical,critical,medical_critical_6
+"Tulong po. may nagnanakaw daw sa aming kalye, pakisuyo tingnan Pakitingnan po agad.",peace_order,average,peace_order_average_0
+"unconscious po siya at hindi gumagalaw, kailangan ng ambulansya agad Sana matulungan niyo kami.",medical,critical,medical_critical_1
+Tulong po. may nakita kaming kahina-hinalang tao na umaakyat sa bakod ng kapitbahay,peace_order,high,peace_order_high_1
+"Tulong po. chest pain at hirap huminga ang asawa ko, nanganganib mabuhay Salamat po.",medical,critical,medical_critical_3
+"Good day po. may nag-aaway gamit ang kutsilyo sa kalye, may nasaktan na Salamat po.",peace_order,critical,peace_order_critical_1
+"Hi po, sobrang laki ng dugo na lumalabas sa sugat niya, mamamatay na po siya Pakitingnan po agad.",medical,critical,medical_critical_6
+Good day po. tanong lang po kung meron kayong fire safety seminar Sana matulungan niyo kami.,fire,low,fire_low_0
+"malakas ang hangin at ulan, natatakot kami baka bumagsak ang puno",disaster,high,disaster_high_0
+paano po mag-file ng blotter report sa minor na sagutan Pakitingnan po agad.,peace_order,low,peace_order_low_1
+"Hi po, meron po bang dental mission dito sa amin",medical,low,medical_low_2
+"tinangay ng baha ang bata, kailangan agad ng rescue Salamat po.",disaster,critical,disaster_critical_2
+Tulong po. may taong may dalang baril at nananakot sa amin ngayon Salamat po.,peace_order,critical,peace_order_critical_0
+"Good day po. may sugat na malalim sa binti, dumudugo pa rin Salamat po.",medical,high,medical_high_4
+Mano po. need po sana ng first aid kit dito sa amin Salamat po.,medical,average,medical_average_1
+"Hi po, pwede po ba humingi ng tulong sa barangay para sa burial assistance Sana matulungan niyo kami.",general_assistance,average,general_assistance_average_0
+"Hi po, paano po mag-file ng blotter report sa minor na sagutan Pakitingnan po agad.",peace_order,low,peace_order_low_1
+kailangan po namin ng tulong dahil naiwan kami ng byahe at wala nang pambili ng gamot,general_assistance,high,general_assistance_high_0
+hirap huminga ang lola ko pero kumakausap pa naman,medical,high,medical_high_3
+Mano po. may nakikitang liyab sa likod ng bahay ng kapitbahay Sana matulungan niyo kami.,fire,high,fire_high_2
+"Hi po, sumasabog ang gasul sa kusina at may apoy na, tulungan niyo kami",fire,critical,fire_critical_3
+"sunog po sa bahay namin, malaki na ang apoy",fire,critical,fire_critical_0
+"Tulong po. may sugat na malalim sa binti, dumudugo pa rin Salamat po.",medical,high,medical_high_4
+Bar. kailan po ang schedule ng check-up sa barangay health center Pakitingnan po agad.,medical,low,medical_low_1
+"Good day po. may usok na lumalabas sa kalapit bahay, baka may sunog Pakitingnan po agad.",fire,high,fire_high_0
+"Hi po, tanong ko lang po kung may libreng bakuna ngayong linggo Salamat po.",medical,low,medical_low_0
+"Hi po, tulong po, hindi na humihinga ang lolo ko Sana matulungan niyo kami.",medical,critical,medical_critical_0
+"Good day po. nalunod po ang bata sa ilog, hindi humihinga Salamat po.",medical,critical,medical_critical_4
+may baradong kanal na sanhi ng pagbaha sa amin tuwing umuulan,disaster,average,disaster_average_1
+"Tulong po. may nag-aaway gamit ang kutsilyo sa kalye, may nasaktan na Salamat po.",peace_order,critical,peace_order_critical_1
+kailan po ang schedule ng check-up sa barangay health center Pakitingnan po agad.,medical,low,medical_low_1
+"Bar. chest pain at hirap huminga ang asawa ko, nanganganib mabuhay Pakitingnan po agad.",medical,critical,medical_critical_3
+Tulong po. nag-iinit ng husto ang de-koryenteng gamit at may umuusok,fire,high,fire_high_1
+"Tulong po. gumuho po ang bahay dahil sa lindol, may nakulong sa loob Pakitingnan po agad.",disaster,critical,disaster_critical_1
+Tulong po. pwede po ba magpatulong sa usapin ng hangganan ng lupa namin Salamat po.,peace_order,low,peace_order_low_0
+Good day po. may sirang poste ng kuryente dahil sa bagyo kahapon Salamat po.,disaster,average,disaster_average_0
+"sumasabog ang gasul sa kusina at may apoy na, tulungan niyo kami",fire,critical,fire_critical_3
+"nadapa ang matanda, parang nabali ang binti niya",medical,high,medical_high_2
+"Mano po. may nag-iingay at lasing na tao sa labas ng bahay namin, nakakatakot na Salamat po.",peace_order,high,peace_order_high_0
+Bar. may naaamoy na sunog pero di na makita kung saan galing Sana matulungan niyo kami.,fire,average,fire_average_1
+"Good day po. nadapa ang matanda, parang nabali ang binti niya Salamat po.",medical,high,medical_high_2
+"Mano po. bumabaha na po nang husto dito, tumataas na ang tubig sa bahay namin Salamat po.",disaster,critical,disaster_critical_0
+"Hi po, anong oras po nagbubukas ang barangay hall tuwing sabado Sana matulungan niyo kami.",general_assistance,low,general_assistance_low_3
+paano po mag-apply ng barangay clearance,general_assistance,low,general_assistance_low_0
+"Bar. sinasaktan ng lalaki ang asawa niya ngayon, sumisigaw siya ng tulong Pakitingnan po agad.",peace_order,critical,peace_order_critical_3
+kailangan namin ng tulong pang-ayuda dahil nawalan ng trabaho ang tatay ko Pakitingnan po agad.,general_assistance,average,general_assistance_average_2
+"Hi po, may baradong kanal na sanhi ng pagbaha sa amin tuwing umuulan Pakitingnan po agad.",disaster,average,disaster_average_1
+pwede po ba magpatulong sa usapin ng hangganan ng lupa namin Salamat po.,peace_order,low,peace_order_low_0
+"Hi po, may nag-iingay at lasing na tao sa labas ng bahay namin, nakakatakot na Sana matulungan niyo kami.",peace_order,high,peace_order_high_0
+Tulong po. pwede po ba humingi ng tulong sa barangay para sa burial assistance,general_assistance,average,general_assistance_average_0
+Good day po. may nakita kaming kahina-hinalang tao na umaakyat sa bakod ng kapitbahay Salamat po.,peace_order,high,peace_order_high_1
+"Good day po. kumakalat na ang apoy sa mga kalapit bahay, kailangan ng bumbero ngayon",fire,critical,fire_critical_2
+"Good day po. sobrang laki ng dugo na lumalabas sa sugat niya, mamamatay na po siya Pakitingnan po agad.",medical,critical,medical_critical_6
+Bar. meron po bang tulong pang-relief goods available ngayon Salamat po.,general_assistance,average,general_assistance_average_1
+"Good day po. nalunod po ang bata sa ilog, hindi humihinga Sana matulungan niyo kami.",medical,critical,medical_critical_4
+"Hi po, tanong ko lang kung may typhoon signal ba ngayon dito",disaster,low,disaster_low_0
+saan po pwede kumuha ng business permit dito sa barangay,general_assistance,low,general_assistance_low_2
+Good day po. pwede po ba mahingi ng gamot para sa ubo,medical,average,medical_average_0
+"nalunod po ang bata sa ilog, hindi humihinga",medical,critical,medical_critical_4
+"Good day po. may lagnat na mataas ang anak ko, sumusuka na rin Pakitingnan po agad.",medical,high,medical_high_0
+may sirang poste ng kuryente dahil sa bagyo kahapon Pakitingnan po agad.,disaster,average,disaster_average_0
+Good day po. tumataas nang mabilis ang tubig sa creek malapit sa amin Salamat po.,disaster,high,disaster_high_1
+Mano po. may nakikitang liyab sa likod ng bahay ng kapitbahay,fire,high,fire_high_2
+nag-iinit ng husto ang de-koryenteng gamit at may umuusok Sana matulungan niyo kami.,fire,high,fire_high_1
+Mano po. paano po humingi ng fire extinguisher para sa aming sari-sari store Salamat po.,fire,low,fire_low_1
+Mano po. pwede po ba mahingi ng gamot para sa ubo Salamat po.,medical,average,medical_average_0
+Tulong po. may naaamoy na sunog pero di na makita kung saan galing,fire,average,fire_average_1
+"Tulong po. may sumisigaw na away sa kabilang kalye, tumataas na boses Pakitingnan po agad.",peace_order,high,peace_order_high_2
+"Hi po, sinasaktan ng lalaki ang asawa niya ngayon, sumisigaw siya ng tulong Salamat po.",peace_order,critical,peace_order_critical_3
+may taong may dalang baril at nananakot sa amin ngayon Salamat po.,peace_order,critical,peace_order_critical_0
+Mano po. kailan po ang schedule ng check-up sa barangay health center Sana matulungan niyo kami.,medical,low,medical_low_1
+"Good day po. tinangay ng baha ang bata, kailangan agad ng rescue Sana matulungan niyo kami.",disaster,critical,disaster_critical_2
+"Good day po. may lagnat na mataas ang anak ko, sumusuka na rin Salamat po.",medical,high,medical_high_0
+"Tulong po. severe bleeding po sa sugat, kailangan agad ng tulong medikal",medical,critical,medical_critical_2
+"Hi po, kailangan po namin ng tulong dahil naiwan kami ng byahe at wala nang pambili ng gamot",general_assistance,high,general_assistance_high_0

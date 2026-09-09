@@ -1,0 +1,28 @@
+<?php
+
+// This is NOT a drop-in file — a fresh Laravel 11 install already has
+// bootstrap/app.php. Merge the highlighted parts below into your existing
+// file so the 'role' middleware alias (used throughout routes/web.php) is
+// registered.
+
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+
+return Application::configure(basePath: dirname(__DIR__))
+    ->withRouting(
+        web: __DIR__.'/../routes/web.php',
+        api: __DIR__.'/../routes/api.php',
+        commands: __DIR__.'/../routes/console.php',
+        health: '/up',
+    )
+    ->withMiddleware(function (Middleware $middleware) {
+        // >>> ADD THIS <<<
+        $middleware->alias([
+            'role' => \App\Http\Middleware\EnsureUserRole::class,
+        ]);
+        // >>> END ADD <<<
+    })
+    ->withExceptions(function (Exceptions $exceptions) {
+        //
+    })->create();
