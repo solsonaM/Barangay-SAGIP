@@ -2,8 +2,16 @@
 @section('title', 'Submit a Request — Barangay SAGIP')
 
 @push('head')
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+    @keyframes radar-ping {
+        0% { transform: scale(0.95); opacity: 0.8; }
+        50% { transform: scale(1.3); opacity: 0.2; }
+        100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .animate-radar {
+        animation: radar-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+</style>
 @endpush
 
 @section('content')
@@ -34,14 +42,45 @@
         </div>
 
         <div>
-            <label class="block text-sm font-medium mb-1">Your Location</label>
-            <div id="map" class="w-full h-64 rounded-md border border-gray-300"></div>
+            <label class="block text-sm font-medium mb-2">Your Location</label>
+            
+            <div class="relative w-full h-72 rounded-xl overflow-hidden border border-gray-300 shadow-inner bg-gray-900">
+                <div id="gps-loading-overlay" class="absolute inset-0 z-30 bg-gray-900/90 backdrop-blur-sm flex flex-col items-center justify-center text-white p-6 transition-opacity duration-500">
+                    <div class="relative w-16 h-16 mb-4 flex items-center justify-center">
+                        <div class="absolute inset-0 rounded-full border-2 border-indigo-500/30 animate-radar"></div>
+                        <div class="absolute inset-0 rounded-full border-2 border-t-indigo-500 border-r-transparent border-b-indigo-500/50 border-l-transparent animate-spin"></div>
+                        <svg class="w-6 h-6 text-indigo-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </div>
+                    <div id="loading-title" class="text-sm font-mono tracking-widest uppercase text-indigo-300 animate-pulse">Acquiring GPS Signal...</div>
+                    <div id="loading-subtitle" class="text-xs text-gray-400 mt-1">Triangulating satellite coordinates</div>
+                </div>
+
+                <iframe id="satellite-map" class="w-full h-full border-0 z-10" src="about:blank" allowfullscreen="" loading="lazy"></iframe>
+
+                <div class="absolute bottom-3 left-3 right-3 z-20 bg-white/95 backdrop-blur-md p-3 rounded-lg shadow-lg border border-gray-100 flex items-center space-x-3">
+                    <div class="bg-indigo-600 text-white p-2 rounded-md">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs font-semibold text-indigo-600 uppercase tracking-wider">Locked Location</p>
+                        <p id="address-display" class="text-xs text-gray-700 truncate">Detecting location...</p>
+                    </div>
+                </div>
+            </div>
+
             <input type="hidden" name="latitude" id="latitude" value="{{ old('latitude') }}" required>
             <input type="hidden" name="longitude" id="longitude" value="{{ old('longitude') }}" required>
-            <div class="flex items-center justify-between mt-1">
-                <p id="coords-label" class="text-xs text-gray-400">Requesting your location…</p>
-                <button type="button" id="retry-location" class="text-xs text-accent hover:underline hidden">
-                    Use my current location
+            
+            <div class="flex items-center justify-between mt-2">
+                <p id="coords-label" class="text-xs text-gray-500">Location is automatically acquired via device GPS in satellite imagery view.</p>
+                <button type="button" id="retry-location" class="text-xs text-indigo-600 hover:underline font-medium hidden">
+                    Retry GPS Location
                 </button>
             </div>
         </div>
@@ -55,66 +94,76 @@
 
 @push('scripts')
 <script>
-    // Default view centered roughly on the barangay until we know the
-    // resident's actual location.
-    const map = L.map('map').setView([13.5925, 124.2049], 15);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-
-    let marker = null;
+    const satelliteMap = document.getElementById('satellite-map');
     const coordsLabel = document.getElementById('coords-label');
     const retryButton = document.getElementById('retry-location');
+    const loadingOverlay = document.getElementById('gps-loading-overlay');
+    const addressDisplay = document.getElementById('address-display');
+    const loadingTitle = document.getElementById('loading-title');
+    const loadingSubtitle = document.getElementById('loading-subtitle');
 
-    function setLocation(lat, lng, source) {
-        document.getElementById('latitude').value = lat.toFixed(7);
-        document.getElementById('longitude').value = lng.toFixed(7);
-        coordsLabel.innerText = source === 'gps'
-            ? `Using your current location (${lat.toFixed(5)}, ${lng.toFixed(5)})`
-            : `Location set manually (${lat.toFixed(5)}, ${lng.toFixed(5)})`;
-        map.setView([lat, lng], 16);
-
-        if (marker) {
-            marker.setLatLng([lat, lng]);
-        } else {
-            marker = L.marker([lat, lng]).addTo(map);
-        }
+    function fetchAddress(lat, lng) {
+        addressDisplay.innerText = 'Resolving street address...';
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+            .then(response => response.json())
+            .then(data => {
+                const address = data.display_name || `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+                addressDisplay.innerText = address;
+                loadingOverlay.style.opacity = '0';
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                }, 400);
+            })
+            .catch(() => {
+                addressDisplay.innerText = `Coordinates: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+                loadingOverlay.style.opacity = '0';
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                }, 400);
+            });
     }
 
-    // Tapping the map always works, as a correction/fallback — GPS can be
-    // a little off indoors, or the resident may want to report a location
-    // other than where they're currently standing.
-    map.on('click', function (e) {
-        setLocation(e.latlng.lat, e.latlng.lng, 'manual');
-    });
+    function setLocation(lat, lng) {
+        document.getElementById('latitude').value = lat.toFixed(7);
+        document.getElementById('longitude').value = lng.toFixed(7);
+        
+        satelliteMap.src = `https://maps.google.com/maps?q=${lat},${lng}&t=k&z=19&output=embed`;
+
+        fetchAddress(lat, lng);
+    }
 
     function requestGps() {
         if (!navigator.geolocation) {
-            coordsLabel.innerText = 'Your browser doesn\'t support location detection — tap the map to set your location.';
+            loadingOverlay.style.display = 'none';
+            addressDisplay.innerText = 'Geolocation not supported';
             retryButton.classList.remove('hidden');
             return;
         }
 
-        coordsLabel.innerText = 'Requesting your location…';
+        loadingOverlay.style.display = 'flex';
+        loadingOverlay.style.opacity = '1';
+        loadingTitle.innerText = 'Acquiring GPS Signal...';
+        loadingSubtitle.innerText = 'Triangulating satellite coordinates';
         retryButton.classList.add('hidden');
 
         navigator.geolocation.getCurrentPosition(
             function (pos) {
-                setLocation(pos.coords.latitude, pos.coords.longitude, 'gps');
+                setLocation(pos.coords.latitude, pos.coords.longitude);
             },
             function (err) {
-                // Permission denied, timed out, or position unavailable —
-                // fall back to letting the resident tap the map themselves.
-                coordsLabel.innerText = 'Couldn\'t get your location automatically — tap the map to set it, or try again.';
+                loadingOverlay.style.opacity = '0';
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                }, 400);
+                addressDisplay.innerText = 'Unable to fetch precise location automatically';
                 retryButton.classList.remove('hidden');
             },
-            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
         );
     }
 
     retryButton.addEventListener('click', requestGps);
 
-    // Ask for permission and locate automatically as soon as the page loads.
     requestGps();
 </script>
 @endpush
