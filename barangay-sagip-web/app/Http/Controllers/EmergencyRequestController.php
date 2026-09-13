@@ -6,7 +6,7 @@ use App\Enums\RequestStatus;
 use App\Http\Requests\StoreEmergencyRequestRequest;
 use App\Models\EmergencyRequest;
 use App\Notifications\RequestStatusUpdated;
-use App\Services\MLClassificationService;
+use App\Services\TokenizationClassificationService;
 use App\Services\ResponseAssignmentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +15,7 @@ use Illuminate\View\View;
 class EmergencyRequestController extends Controller
 {
     public function __construct(
-        protected MLClassificationService $mlService,
+        protected TokenizationClassificationService $mlService,
         protected ResponseAssignmentService $assignmentService,
     ) {
     }

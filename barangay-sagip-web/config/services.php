@@ -13,9 +13,9 @@ return [
     | a conventional file to locate the various service credentials.
     |
     */
-'ml_service' => [
-    'base_url' => env('ML_SERVICE_URL', 'http://127.0.0.1:8001'),
-    'timeout' => env('ML_SERVICE_TIMEOUT', 5),
+'tokenization_service' => [
+    'base_url' => env('TOKENIZATION_SERVICE_URL', 'http://127.0.0.1:8001'),
+    'timeout' => env('TOKENIZATION_SERVICE_TIMEOUT', 5),
 ],
 
     'postmark' => [

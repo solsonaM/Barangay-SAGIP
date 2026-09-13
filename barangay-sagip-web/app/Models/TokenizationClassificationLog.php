@@ -4,8 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MlClassificationLog extends Model
+class TokenizationClassificationLog extends Model
 {
+    protected $table = 'tokenization_classification_logs';
+
     public $timestamps = false;
 
     protected $fillable = [

@@ -9,7 +9,7 @@
     </a>
 </div>
 
-<div class="grid grid-cols-2 gap-6">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
     <div class="bg-white rounded-lg shadow p-4">
         <h2 class="font-semibold text-navy mb-3 text-sm">Requests by Category</h2>
         <table class="w-full text-sm">

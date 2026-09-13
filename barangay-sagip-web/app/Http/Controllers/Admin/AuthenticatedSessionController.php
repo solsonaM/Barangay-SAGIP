@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
@@ -9,11 +9,16 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
+/**
+ * Staff-only login, kept intentionally separate from the resident-facing
+ * Auth\AuthenticatedSessionController and reachable only via the unlisted
+ * /admin/login URL — it is never linked from any resident-facing page.
+ */
 class AuthenticatedSessionController extends Controller
 {
     public function create(): View
     {
-        return view('auth.login');
+        return view('admin.login');
     }
 
     public function store(Request $request): RedirectResponse
@@ -29,13 +34,10 @@ class AuthenticatedSessionController extends Controller
             ]);
         }
 
-        // This is the resident-facing login. Staff accounts use the separate,
-        // unlisted /admin/login instead — keeps the two experiences cleanly
-        // apart rather than branching one shared login page by role.
-        if (! Auth::user()->isResident()) {
+        if (Auth::user()->isResident()) {
             Auth::logout();
             throw ValidationException::withMessages([
-                'email' => 'This login is for residents. Barangay staff should use the staff login.',
+                'email' => 'This login is for barangay staff only.',
             ]);
         }
 
@@ -51,6 +53,6 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect()->route('admin.login');
     }
 }

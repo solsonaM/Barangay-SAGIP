@@ -17,7 +17,7 @@ use App\Enums\RequestStatus;
  */
 class ResponseAssignmentService
 {
-    public function __construct(protected MLClassificationService $mlService)
+    public function __construct(protected TokenizationClassificationService $mlService)
     {
     }
 

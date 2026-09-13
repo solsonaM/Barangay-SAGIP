@@ -2,8 +2,8 @@
 @section('title', 'Request #' . $emergencyRequest->id . ' — Barangay SAGIP')
 
 @section('content')
-<div class="grid grid-cols-3 gap-6">
-    <div class="col-span-2 bg-white rounded-lg shadow p-6">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 bg-white rounded-lg shadow p-6">
         <div class="flex items-start justify-between mb-4">
             <div>
                 <h1 class="text-xl font-bold text-navy">Request #{{ $emergencyRequest->id }}</h1>
@@ -22,7 +22,7 @@
 
         <p class="bg-gray-50 rounded-md p-3 text-sm mb-4">{{ $emergencyRequest->description }}</p>
 
-        <div class="grid grid-cols-2 gap-4 text-sm mb-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm mb-6">
             <div>
                 <span class="text-gray-500">Category:</span>
                 <span class="font-medium capitalize">{{ str_replace('_', ' ', $emergencyRequest->category ?? '—') }}</span>
@@ -75,7 +75,7 @@
         @if(auth()->user()->isOfficial() || auth()->user()->isPersonnel())
             <div class="border-t pt-4 mt-4">
                 <h2 class="font-semibold text-navy mb-2">Update Status</h2>
-                <form method="POST" action="{{ route('requests.updateStatus', $emergencyRequest) }}" class="flex gap-2">
+                <form method="POST" action="{{ route('requests.updateStatus', $emergencyRequest) }}" class="flex flex-col sm:flex-row gap-2">
                     @csrf
                     @method('PATCH')
                     <select name="status" class="rounded-md border-gray-300 text-sm">

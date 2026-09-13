@@ -65,7 +65,7 @@ class EmergencyRequest extends Model
 
     public function classificationLogs()
     {
-        return $this->hasMany(MlClassificationLog::class);
+        return $this->hasMany(TokenizationClassificationLog::class);
     }
 
     /**

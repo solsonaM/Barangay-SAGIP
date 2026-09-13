@@ -1,11 +1,12 @@
 @extends('layouts.resident-auth')
-@section('title', 'Sign In — Barangay SAGIP')
+@section('title', 'Staff Login — Barangay SAGIP')
 
 @section('content')
-<h2 class="text-2xl font-bold text-white">Welcome back</h2>
-<p class="mt-1.5 text-sm text-gray-500 mb-8">Sign in to report an emergency or check your requests.</p>
+<p class="text-xs font-semibold tracking-wide text-gray-500 uppercase mb-1">Staff Access</p>
+<h2 class="text-2xl font-bold text-white">Barangay SAGIP</h2>
+<p class="mt-1.5 text-sm text-gray-500 mb-8">Sign in as a barangay official or response personnel.</p>
 
-<form method="POST" action="{{ route('login') }}" class="space-y-5">
+<form method="POST" action="{{ route('admin.login.store') }}" class="space-y-5">
     @csrf
 
     <x-auth-field label="Email" name="email" type="email" :value="old('email')" placeholder="you@example.com" autofocus />
@@ -20,11 +21,4 @@
         Sign In
     </button>
 </form>
-
-<p class="mt-8 text-center text-sm text-gray-500">
-    New to Barangay SAGIP?
-    <a href="{{ route('register') }}" class="text-transparent bg-clip-text bg-gradient-to-r from-violet to-azure font-semibold hover:opacity-80">
-        Create an account
-    </a>
-</p>
 @endsection

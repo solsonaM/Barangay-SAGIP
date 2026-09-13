@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AuthenticatedSessionController as AdminAuthenticatedSessionController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DashboardController;
@@ -12,10 +13,13 @@ use App\Http\Controllers\ResponseAssignmentController;
 use App\Http\Controllers\ResponsePersonnelController;
 use Illuminate\Support\Facades\Route;
 
+// Root always goes to the resident-facing login — this is a citizen-facing
+// app first; staff access lives at the separate, unlisted /admin/login below
+// and is never linked from here.
 Route::get('/', fn () => redirect()->route('login'));
 
 // ---------------------------------------------------------------------
-// Guest routes
+// Resident-facing guest routes
 // ---------------------------------------------------------------------
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])->name('register');
@@ -28,6 +32,19 @@ Route::middleware('guest')->group(function () {
 Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
+
+// ---------------------------------------------------------------------
+// Staff-only login — deliberately not linked from any resident-facing
+// page. Officials and personnel use this instead of the routes above.
+// ---------------------------------------------------------------------
+Route::middleware('guest')->group(function () {
+    Route::get('admin/login', [AdminAuthenticatedSessionController::class, 'create'])->name('admin.login');
+    Route::post('admin/login', [AdminAuthenticatedSessionController::class, 'store'])->name('admin.login.store');
+});
+
+Route::post('admin/logout', [AdminAuthenticatedSessionController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('admin.logout');
 
 // ---------------------------------------------------------------------
 // Authenticated routes (all roles)

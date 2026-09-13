@@ -10,6 +10,7 @@
 </div>
 
 <div class="bg-white rounded-lg shadow overflow-hidden">
+    <div class="overflow-x-auto">
     <table class="w-full text-sm">
         <thead class="bg-gray-50 text-gray-500 text-left">
             <tr>
@@ -57,5 +58,6 @@
             @endforelse
         </tbody>
     </table>
+    </div>
 </div>
 @endsection

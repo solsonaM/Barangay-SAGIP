@@ -28,6 +28,6 @@ class ResidentProfileController extends Controller
             $request->validated()
         );
 
-        return redirect()->route('dashboard')->with('status', 'Profile saved.');
+        return redirect()->route('requests.create')->with('status', 'Profile saved. You can now submit a report.');
     }
 }

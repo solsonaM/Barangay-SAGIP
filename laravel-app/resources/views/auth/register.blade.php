@@ -1,46 +1,46 @@
-@extends('layouts.app')
+@extends('layouts.resident-auth')
 @section('title', 'Register — Barangay SAGIP')
 
 @section('content')
-<div class="max-w-sm mx-auto mt-12 bg-white p-6 rounded-lg shadow">
-    <h1 class="text-xl font-bold text-navy mb-1">Create your account</h1>
-    <p class="text-sm text-gray-500 mb-6">Step 1 of 2 — you'll complete your resident profile next.</p>
+<div>
+    <h1 class="text-2xl font-bold text-white mb-1">Create your account</h1>
+    <p class="text-sm text-gray-400 mb-6">Step 1 of 2 — you'll complete your resident profile next.</p>
 
     <form method="POST" action="{{ route('register') }}" class="space-y-4">
         @csrf
         <div>
-            <label class="block text-sm font-medium mb-1">Full Name</label>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-300 mb-1.5">Full Name</label>
             <input type="text" name="name" value="{{ old('name') }}" required autofocus
-                   class="w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent">
+                   class="w-full rounded-xl bg-field border border-edge text-white px-3.5 py-2.5 text-sm focus:outline-none focus:border-violet focus:ring-1 focus:ring-violet placeholder-gray-500">
         </div>
         <div>
-            <label class="block text-sm font-medium mb-1">Email</label>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-300 mb-1.5">Email</label>
             <input type="email" name="email" value="{{ old('email') }}" required
-                   class="w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent">
+                   class="w-full rounded-xl bg-field border border-edge text-white px-3.5 py-2.5 text-sm focus:outline-none focus:border-violet focus:ring-1 focus:ring-violet placeholder-gray-500">
         </div>
         <div>
-            <label class="block text-sm font-medium mb-1">Phone Number</label>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-300 mb-1.5">Phone Number</label>
             <input type="text" name="phone_number" value="{{ old('phone_number') }}" required
                    placeholder="09XXXXXXXXX"
-                   class="w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent">
+                   class="w-full rounded-xl bg-field border border-edge text-white px-3.5 py-2.5 text-sm focus:outline-none focus:border-violet focus:ring-1 focus:ring-violet placeholder-gray-500">
         </div>
         <div>
-            <label class="block text-sm font-medium mb-1">Password</label>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-300 mb-1.5">Password</label>
             <input type="password" name="password" required
-                   class="w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent">
+                   class="w-full rounded-xl bg-field border border-edge text-white px-3.5 py-2.5 text-sm focus:outline-none focus:border-violet focus:ring-1 focus:ring-violet placeholder-gray-500">
         </div>
         <div>
-            <label class="block text-sm font-medium mb-1">Confirm Password</label>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-300 mb-1.5">Confirm Password</label>
             <input type="password" name="password_confirmation" required
-                   class="w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent">
+                   class="w-full rounded-xl bg-field border border-edge text-white px-3.5 py-2.5 text-sm focus:outline-none focus:border-violet focus:ring-1 focus:ring-violet placeholder-gray-500">
         </div>
-        <button class="w-full bg-navy text-white rounded-md py-2 font-medium hover:bg-accent transition">
+        <button type="submit" class="w-full bg-gradient-to-r from-violet to-indigo hover:opacity-90 text-white font-semibold py-2.5 rounded-xl transition shadow-lg mt-2">
             Create Account
         </button>
     </form>
 
-    <p class="text-sm text-gray-500 mt-4">
-        Already registered? <a href="{{ route('login') }}" class="text-accent hover:underline">Sign in</a>
+    <p class="text-sm text-gray-400 mt-6 text-center">
+        Already registered? <a href="{{ route('login') }}" class="text-violet hover:text-indigo font-medium hover:underline">Sign in</a>
     </p>
 </div>
 @endsection

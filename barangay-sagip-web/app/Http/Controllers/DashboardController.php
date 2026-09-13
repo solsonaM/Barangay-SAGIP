@@ -4,33 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Models\EmergencyRequest;
 use App\Models\ResponsePersonnel;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 /**
  * Feature 11: Dashboards.
  *
- * Renders a different summary depending on role:
- *   - resident: their own requests + status
- *   - personnel: their active assignments
- *   - official: barangay-wide operational overview
+ * Officials and personnel land here after login. Residents never see this
+ * view — they're sent straight to the report form (requests.create) since
+ * that's the resident-facing app's primary action; "My Requests" covers
+ * what the old resident dashboard branch used to show.
  */
 class DashboardController extends Controller
 {
-    public function index(): View
+    public function index(): View|RedirectResponse
     {
         $user = Auth::user();
 
         if ($user->isResident()) {
-            $requests = EmergencyRequest::where('resident_id', $user->id)
-                ->latest()
-                ->limit(10)
-                ->get();
-
-            return view('dashboard', [
-                'role' => 'resident',
-                'requests' => $requests,
-            ]);
+            return redirect()->route('requests.create');
         }
 
         if ($user->isPersonnel()) {

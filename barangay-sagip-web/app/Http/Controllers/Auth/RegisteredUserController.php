@@ -29,14 +29,26 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'max:100', 'regex:/^\p{Lu}[\p{L}\'-]*(\s\p{Lu}[\p{L}\'-]*)*$/u'],
+            'middle_name' => ['nullable', 'string', 'max:100', 'regex:/^(\p{Lu}[\p{L}\'-]*(\s\p{Lu}[\p{L}\'-]*)*)?$/u'],
+            'last_name' => ['required', 'string', 'max:100', 'regex:/^\p{Lu}[\p{L}\'-]*(\s\p{Lu}[\p{L}\'-]*)*$/u'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
             'phone_number' => ['required', 'string', 'max:30'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ], [
+            'first_name.regex' => 'First name must start with a capital letter and contain only letters.',
+            'middle_name.regex' => 'Middle name must start with a capital letter and contain only letters.',
+            'last_name.regex' => 'Last name must start with a capital letter and contain only letters.',
         ]);
 
+        $fullName = trim(implode(' ', array_filter([
+            $validated['first_name'],
+            $validated['middle_name'] ?? null,
+            $validated['last_name'],
+        ])));
+
         $user = User::create([
-            'name' => $validated['name'],
+            'name' => $fullName,
             'email' => $validated['email'],
             'phone_number' => $validated['phone_number'],
             'password' => Hash::make($validated['password']),

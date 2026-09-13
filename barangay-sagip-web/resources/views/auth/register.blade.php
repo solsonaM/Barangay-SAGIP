@@ -1,46 +1,48 @@
-@extends('layouts.app')
-@section('title', 'Register — Barangay SAGIP')
+@extends('layouts.resident-auth')
+@section('title', 'Create Account — Barangay SAGIP')
 
 @section('content')
-<div class="max-w-sm mx-auto mt-12 bg-white p-6 rounded-lg shadow">
-    <h1 class="text-xl font-bold text-navy mb-1">Create your account</h1>
-    <p class="text-sm text-gray-500 mb-6">Step 1 of 2 — you'll complete your resident profile next.</p>
+<h2 class="text-2xl font-bold text-white">Create your account</h2>
+<p class="mt-1.5 text-sm text-gray-500 mb-8">Step 1 of 2 — you'll complete your resident profile next.</p>
 
-    <form method="POST" action="{{ route('register') }}" class="space-y-4">
-        @csrf
-        <div>
-            <label class="block text-sm font-medium mb-1">Full Name</label>
-            <input type="text" name="name" value="{{ old('name') }}" required autofocus
-                   class="w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent">
-        </div>
-        <div>
-            <label class="block text-sm font-medium mb-1">Email</label>
-            <input type="email" name="email" value="{{ old('email') }}" required
-                   class="w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent">
-        </div>
-        <div>
-            <label class="block text-sm font-medium mb-1">Phone Number</label>
-            <input type="text" name="phone_number" value="{{ old('phone_number') }}" required
-                   placeholder="09XXXXXXXXX"
-                   class="w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent">
-        </div>
-        <div>
-            <label class="block text-sm font-medium mb-1">Password</label>
-            <input type="password" name="password" required
-                   class="w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent">
-        </div>
-        <div>
-            <label class="block text-sm font-medium mb-1">Confirm Password</label>
-            <input type="password" name="password_confirmation" required
-                   class="w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent">
-        </div>
-        <button class="w-full bg-navy text-white rounded-md py-2 font-medium hover:bg-accent transition">
-            Create Account
-        </button>
-    </form>
+<form method="POST" action="{{ route('register') }}" class="space-y-5">
+    @csrf
 
-    <p class="text-sm text-gray-500 mt-4">
-        Already registered? <a href="{{ route('login') }}" class="text-accent hover:underline">Sign in</a>
-    </p>
-</div>
+    <x-auth-field label="First Name" name="first_name" :value="old('first_name')" placeholder="e.g. Juan" autofocus class="capitalize-name" />
+    <x-auth-field label="Middle Name" name="middle_name" :value="old('middle_name')" :required="false" placeholder="e.g. Padin (optional)" class="capitalize-name" />
+    <x-auth-field label="Last Name" name="last_name" :value="old('last_name')" placeholder="e.g. Dela Cruz" class="capitalize-name" />
+
+    <x-auth-field label="Email" name="email" type="email" :value="old('email')" placeholder="you@example.com" />
+    <x-auth-field label="Phone Number" name="phone_number" :value="old('phone_number')" placeholder="09XXXXXXXXX" />
+    <x-auth-field label="Password" name="password" type="password" placeholder="At least 8 characters" />
+    <x-auth-field label="Confirm Password" name="password_confirmation" type="password" placeholder="Re-enter your password" />
+
+    <button class="w-full rounded-xl bg-gradient-to-r from-violet to-azure py-3 font-semibold text-white shadow-lg shadow-violet/20 hover:shadow-violet/30 hover:opacity-95 transition">
+        Create Account
+    </button>
+</form>
+
+<p class="mt-8 text-center text-sm text-gray-500">
+    Already registered?
+    <a href="{{ route('login') }}" class="text-transparent bg-clip-text bg-gradient-to-r from-violet to-azure font-semibold hover:opacity-80">
+        Sign in
+    </a>
+</p>
+
+@push('scripts')
+<script>
+    // Auto-capitalize the first letter of each word as the user types their
+    // name, so "juan dela cruz" becomes "Juan Dela Cruz" without rejecting
+    // the submission — validation on the server is just a safety net.
+    document.querySelectorAll('.capitalize-name').forEach(function (input) {
+        input.addEventListener('input', function (e) {
+            const cursor = e.target.selectionStart;
+            e.target.value = e.target.value.replace(/(^|\s)([a-zà-ÿ])/gu, function (match, boundary, letter) {
+                return boundary + letter.toUpperCase();
+            });
+            e.target.setSelectionRange(cursor, cursor);
+        });
+    });
+</script>
+@endpush
 @endsection

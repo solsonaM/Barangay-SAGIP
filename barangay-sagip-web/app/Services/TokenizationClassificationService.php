@@ -3,31 +3,32 @@
 namespace App\Services;
 
 use App\Models\EmergencyRequest;
-use App\Models\MlClassificationLog;
+use App\Models\TokenizationClassificationLog;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 /**
- * Thin HTTP client for the Barangay SAGIP ML microservice (FastAPI +
- * scikit-learn), which implements:
- *   - Feature 3: ML-Based Request Classification
- *   - Feature 4: Urgency / Priority Classification
+ * Thin HTTP client for the Barangay SAGIP tokenization microservice
+ * (FastAPI + keyword-phrase matching — see
+ * tokenization-service/tokenizer_classifier.py), which implements:
+ *   - Feature 3: Request Classification (tokenization / keyword matching)
+ *   - Feature 4: Urgency / Priority Classification (tokenization / keyword matching)
  *   - Feature 6: Response Assignment Classification (see ResponseAssignmentService)
  *
- * Every call is logged to ml_classification_logs for auditability, and every
- * call fails soft: if the ML service is unreachable, the request is simply
- * routed to human review (Feature 5) instead of the request submission
- * failing outright.
+ * Every call is logged to tokenization_classification_logs for auditability,
+ * and every call fails soft: if the tokenization service is unreachable,
+ * the request is simply routed to human review (Feature 5) instead of the
+ * request submission failing outright.
  */
-class MLClassificationService
+class TokenizationClassificationService
 {
     protected string $baseUrl;
     protected int $timeoutSeconds;
 
     public function __construct()
     {
-        $this->baseUrl = rtrim(config('services.ml_service.base_url'), '/');
-        $this->timeoutSeconds = (int) config('services.ml_service.timeout', 5);
+        $this->baseUrl = rtrim(config('services.tokenization_service.base_url'), '/');
+        $this->timeoutSeconds = (int) config('services.tokenization_service.timeout', 5);
     }
 
     /**
@@ -41,7 +42,7 @@ class MLClassificationService
 
         if ($result === null) {
             $request->needs_review = true;
-            $request->review_reason = 'ML service unavailable — routed to manual review.';
+            $request->review_reason = 'Tokenization service unavailable — routed to manual review.';
             return $request;
         }
 
@@ -87,7 +88,7 @@ class MLClassificationService
 
             if ($response->failed()) {
                 $success = false;
-                Log::warning("ML service call failed [{$endpoint}]", [
+                Log::warning("Tokenization service call failed [{$endpoint}]", [
                     'status' => $response->status(),
                     'body' => $response->body(),
                 ]);
@@ -96,13 +97,13 @@ class MLClassificationService
             }
         } catch (\Throwable $e) {
             $success = false;
-            Log::error("ML service call exception [{$endpoint}]: " . $e->getMessage());
+            Log::error("Tokenization service call exception [{$endpoint}]: " . $e->getMessage());
         }
 
         $elapsedMs = (int) round((microtime(true) - $start) * 1000);
 
         if ($emergencyRequestId) {
-            MlClassificationLog::create([
+            TokenizationClassificationLog::create([
                 'emergency_request_id' => $emergencyRequestId,
                 'endpoint' => $endpoint,
                 'request_payload' => $payload,

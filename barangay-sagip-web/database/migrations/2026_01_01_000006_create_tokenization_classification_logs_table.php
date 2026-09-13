@@ -7,14 +7,14 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Stores the raw response from the ML microservice for every
-     * classification call, so officials/researchers can audit model
+     * Stores the raw response from the tokenization service for every
+     * classification call, so officials/researchers can audit classifier
      * behavior and the group can compute real accuracy later against
      * outcomes recorded through Feature 12 (Report Generator).
      */
     public function up(): void
     {
-        Schema::create('ml_classification_logs', function (Blueprint $table) {
+        Schema::create('tokenization_classification_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('emergency_request_id')->constrained()->cascadeOnDelete();
             $table->string('endpoint');
@@ -28,6 +28,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('ml_classification_logs');
+        Schema::dropIfExists('tokenization_classification_logs');
     }
 };

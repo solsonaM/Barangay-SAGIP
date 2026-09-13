@@ -64,7 +64,7 @@
     </main>
 
     <footer class="text-center text-xs text-gray-400 py-4">
-        Barangay SAGIP — Capstone Prototype
+        BUILT BY MARK ANGELO SOLSONA
     </footer>
 
     @stack('scripts')

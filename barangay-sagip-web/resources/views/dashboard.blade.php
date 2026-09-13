@@ -3,41 +3,7 @@
 
 @section('content')
 
-@if($role === 'resident')
-    <h1 class="text-xl font-bold text-navy mb-1">Welcome, {{ auth()->user()->name }}</h1>
-    <p class="text-sm text-gray-500 mb-6">Here's the status of your recent requests.</p>
-
-    <div class="flex gap-3 mb-6">
-        <a href="{{ route('requests.create') }}" class="bg-navy text-white text-sm rounded-md px-4 py-2 hover:bg-accent transition">
-            + Submit a Request
-        </a>
-        <a href="{{ route('residents.profile.edit') }}" class="border border-gray-300 text-sm rounded-md px-4 py-2 hover:bg-gray-50 transition">
-            Edit My Profile
-        </a>
-    </div>
-
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-        <table class="w-full text-sm">
-            <thead class="bg-gray-50 text-gray-500 text-left">
-                <tr><th class="px-4 py-2">#</th><th class="px-4 py-2">Category</th><th class="px-4 py-2">Status</th><th class="px-4 py-2">Submitted</th><th></th></tr>
-            </thead>
-            <tbody class="divide-y">
-                @forelse ($requests as $r)
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-4 py-2 font-medium">#{{ $r->id }}</td>
-                        <td class="px-4 py-2 capitalize">{{ str_replace('_', ' ', $r->category ?? 'pending classification') }}</td>
-                        <td class="px-4 py-2"><x-badge :color="$r->status->badgeColor()">{{ $r->status->label() }}</x-badge></td>
-                        <td class="px-4 py-2 text-gray-500">{{ $r->created_at->diffForHumans() }}</td>
-                        <td class="px-4 py-2 text-right"><a href="{{ route('requests.show', $r) }}" class="text-accent hover:underline">View</a></td>
-                    </tr>
-                @empty
-                    <tr><td colspan="5" class="px-4 py-6 text-center text-gray-400">You haven't submitted any requests yet.</td></tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-
-@elseif($role === 'personnel')
+@if($role === 'personnel')
     <h1 class="text-xl font-bold text-navy mb-1">Welcome, {{ auth()->user()->name }}</h1>
     <p class="text-sm text-gray-500 mb-6">Your active assignments.</p>
 
@@ -48,6 +14,7 @@
         </div>
     @else
         <div class="bg-white rounded-lg shadow overflow-hidden">
+            <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead class="bg-gray-50 text-gray-500 text-left">
                     <tr><th class="px-4 py-2">Request</th><th class="px-4 py-2">Category</th><th class="px-4 py-2">Urgency</th><th class="px-4 py-2">Distance</th><th></th></tr>
@@ -66,6 +33,7 @@
                     @endforelse
                 </tbody>
             </table>
+            </div>
         </div>
     @endif
 
@@ -73,7 +41,7 @@
     {{-- official --}}
     <h1 class="text-xl font-bold text-navy mb-6">Barangay Operations Overview</h1>
 
-    <div class="grid grid-cols-5 gap-4 mb-6">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
         <div class="bg-white rounded-lg shadow p-4">
             <p class="text-xs text-gray-500">Total Requests</p>
             <p class="text-2xl font-bold text-navy">{{ $counts['total'] }}</p>
@@ -98,6 +66,7 @@
 
     <div class="bg-white rounded-lg shadow overflow-hidden">
         <div class="px-4 py-3 border-b font-semibold text-navy text-sm">Recent Requests</div>
+        <div class="overflow-x-auto">
         <table class="w-full text-sm">
             <thead class="bg-gray-50 text-gray-500 text-left">
                 <tr><th class="px-4 py-2">#</th><th class="px-4 py-2">Resident</th><th class="px-4 py-2">Category</th><th class="px-4 py-2">Urgency</th><th class="px-4 py-2">Status</th><th class="px-4 py-2">Assigned</th><th></th></tr>
@@ -118,6 +87,7 @@
                 @endforeach
             </tbody>
         </table>
+        </div>
     </div>
 @endif
 
