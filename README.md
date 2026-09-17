@@ -13,6 +13,8 @@ Browser
 Nginx --> Laravel PHP-FPM --> PostgreSQL
              |
              +----------> Private FastAPI service
+             |
+             +----------> Database-backed queue --> Queue worker
 ```
 
 The production Docker stack is defined in `docker-compose.production.yml` and contains:
@@ -105,7 +107,7 @@ The `TOKENIZATION_SERVICE_KEY` must match the key configured for the FastAPI ser
 
 ### Recommended Herd workflow
 
-Use two terminals during development:
+Use three terminals during development:
 
 **Terminal 1 — Laravel/Vite**
 
@@ -114,7 +116,9 @@ cd barangay-sagip-web
 npm run dev
 ```
 
-**Terminal 2 — FastAPI ML service**
+Herd handles the Laravel/PHP web server. Vite handles frontend asset hot-reloading.
+
+**Terminal 2 — FastAPI classification service**
 
 ```bash
 cd tokenization-service
@@ -122,7 +126,14 @@ cd tokenization-service
 uvicorn main:app --host 127.0.0.1 --port 8001
 ```
 
-Herd handles the Laravel/PHP web server. Vite handles frontend asset hot-reloading, while the FastAPI process provides the private classification API locally.
+**Terminal 3 — Laravel queue worker**
+
+```bash
+cd barangay-sagip-web
+php artisan queue:work database --sleep=3 --tries=3 --timeout=90
+```
+
+The queue worker is required for queued Laravel jobs to be processed. Barangay SAGIP's in-app notifications implement Laravel's queued notification flow, so without the worker, notification jobs remain in the database queue and will not be delivered to the `notifications` table until a worker processes them.
 
 ## Production deployment
 
