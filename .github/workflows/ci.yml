@@ -11,6 +11,20 @@ permissions:
 jobs:
   laravel:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: barangay_sagip_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d barangay_sagip_test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
     defaults:
       run:
         working-directory: barangay-sagip-web
@@ -22,7 +36,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          extensions: mbstring, sqlite3, pdo_sqlite
+          extensions: mbstring, pgsql, pdo_pgsql, sqlite3, pdo_sqlite
           coverage: none
 
       - name: Install Composer dependencies
@@ -35,18 +49,25 @@ jobs:
         run: |
           cp .env.example .env
           php artisan key:generate
-          touch database/database.sqlite
 
-      - name: Run migrations
+      - name: Run PostgreSQL migrations
         env:
-          DB_CONNECTION: sqlite
-          DB_DATABASE: database/database.sqlite
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: barangay_sagip_test
+          DB_USERNAME: postgres
+          DB_PASSWORD: postgres
         run: php artisan migrate --force
 
-      - name: Run Laravel tests
+      - name: Run Laravel tests against PostgreSQL
         env:
-          DB_CONNECTION: sqlite
-          DB_DATABASE: database/database.sqlite
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: barangay_sagip_test
+          DB_USERNAME: postgres
+          DB_PASSWORD: postgres
         run: php artisan test
 
       - name: PHP syntax check
@@ -97,6 +118,9 @@ jobs:
 
   docker:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -109,6 +133,51 @@ jobs:
 
       - name: Build production images
         run: docker compose --env-file docker-compose.production.env.example -f docker-compose.production.yml build
+
+      - name: Scan Laravel image
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: 'barangay-sagip-app'
+          format: 'sarif'
+          output: 'trivy-laravel.sarif'
+          severity: 'CRITICAL,HIGH'
+          ignore-unfixed: true
+
+      - name: Scan queue worker image
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: 'barangay-sagip-queue-worker'
+          format: 'sarif'
+          output: 'trivy-queue.sarif'
+          severity: 'CRITICAL,HIGH'
+          ignore-unfixed: true
+
+      - name: Scan Nginx image
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: 'barangay-sagip-nginx'
+          format: 'sarif'
+          output: 'trivy-nginx.sarif'
+          severity: 'CRITICAL,HIGH'
+          ignore-unfixed: true
+
+      - name: Scan Python service image
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: 'barangay-sagip-ml-service'
+          format: 'sarif'
+          output: 'trivy-ml.sarif'
+          severity: 'CRITICAL,HIGH'
+          ignore-unfixed: true
+
+      - name: Upload container scan reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: container-security-reports
+          path: '*.sarif'
+          if-no-files-found: ignore
+          retention-days: 14
 
   secrets:
     runs-on: ubuntu-latest
