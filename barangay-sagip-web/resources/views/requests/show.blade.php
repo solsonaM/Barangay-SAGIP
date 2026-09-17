@@ -47,13 +47,17 @@
 
         @if($assignment = $emergencyRequest->currentAssignment)
             <div class="bg-indigo-50 border border-indigo-200 rounded-md p-3 mb-6 text-sm">
-                <strong>Assigned to:</strong> {{ $assignment->responsePersonnel->name }}
-                ({{ str_replace('_', ' ', $assignment->responsePersonnel->specialization) }})
-                @if($assignment->distance_km)
-                    — {{ $assignment->distance_km }} km away
-                @endif
-                @if($assignment->was_manual_override)
-                    <span class="text-gray-400">(manually assigned)</span>
+                @if(auth()->user()->isResident())
+                    <strong>Response team:</strong> A responder has been assigned to your request.
+                @else
+                    <strong>Assigned to:</strong> {{ $assignment->responsePersonnel->name }}
+                    ({{ str_replace('_', ' ', $assignment->responsePersonnel->specialization) }})
+                    @if($assignment->distance_km)
+                        — {{ $assignment->distance_km }} km away
+                    @endif
+                    @if($assignment->was_manual_override)
+                        <span class="text-gray-400">(manually assigned)</span>
+                    @endif
                 @endif
             </div>
         @endif
