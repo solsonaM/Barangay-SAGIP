@@ -37,10 +37,6 @@ Route::post('admin/logout', [AdminAuthenticatedSessionController::class, 'destro
 Route::middleware('auth')->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('requests', [EmergencyRequestController::class, 'index'])->name('requests.index');
-    Route::get('requests/create', [EmergencyRequestController::class, 'create'])->name('requests.create');
-    Route::post('requests', [EmergencyRequestController::class, 'store'])
-        ->middleware('throttle:emergency-request')
-        ->name('requests.store');
     Route::get('requests/{emergencyRequest}', [EmergencyRequestController::class, 'show'])->name('requests.show');
     Route::get('map', [MapController::class, 'index'])->name('map.index');
     Route::get('map/data', [MapController::class, 'data'])->name('map.data');
@@ -51,6 +47,10 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:resident')->group(function () {
         Route::get('profile', [ResidentProfileController::class, 'edit'])->name('residents.profile.edit');
         Route::put('profile', [ResidentProfileController::class, 'update'])->name('residents.profile.update');
+        Route::get('requests/create', [EmergencyRequestController::class, 'create'])->name('requests.create');
+        Route::post('requests', [EmergencyRequestController::class, 'store'])
+            ->middleware('throttle:emergency-request')
+            ->name('requests.store');
     });
 
     Route::middleware('role:official,personnel')->group(function () {
