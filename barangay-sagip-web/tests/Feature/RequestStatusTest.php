@@ -104,6 +104,71 @@ class RequestStatusTest extends TestCase
         ]);
     }
 
+    public function test_personnel_can_update_only_an_assigned_request(): void
+    {
+        $personnelUser = User::factory()->create(['role' => UserRole::Personnel]);
+        $resident = User::factory()->create(['role' => UserRole::Resident]);
+        $personnel = ResponsePersonnel::create([
+            'user_id' => $personnelUser->id,
+            'name' => 'Assigned Responder',
+            'specialization' => 'general_assistance',
+            'is_available' => true,
+            'current_workload' => 1,
+            'latitude' => 13.5925,
+            'longitude' => 124.2049,
+        ]);
+        $request = $this->createRequest($resident, RequestStatus::Assigned);
+        ResponseAssignment::create([
+            'emergency_request_id' => $request->id,
+            'response_personnel_id' => $personnel->id,
+            'was_manual_override' => false,
+        ]);
+
+        $this->actingAs($personnelUser)
+            ->patch(route('requests.updateStatus', $request), [
+                'status' => RequestStatus::EnRoute->value,
+            ])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('emergency_requests', [
+            'id' => $request->id,
+            'status' => RequestStatus::EnRoute->value,
+        ]);
+    }
+
+    public function test_personnel_cannot_update_another_responders_request(): void
+    {
+        $personnelUser = User::factory()->create(['role' => UserRole::Personnel]);
+        $otherPersonnelUser = User::factory()->create(['role' => UserRole::Personnel]);
+        $resident = User::factory()->create(['role' => UserRole::Resident]);
+        $otherPersonnel = ResponsePersonnel::create([
+            'user_id' => $otherPersonnelUser->id,
+            'name' => 'Other Responder',
+            'specialization' => 'general_assistance',
+            'is_available' => true,
+            'current_workload' => 1,
+            'latitude' => 13.5925,
+            'longitude' => 124.2049,
+        ]);
+        $request = $this->createRequest($resident, RequestStatus::Assigned);
+        ResponseAssignment::create([
+            'emergency_request_id' => $request->id,
+            'response_personnel_id' => $otherPersonnel->id,
+            'was_manual_override' => false,
+        ]);
+
+        $this->actingAs($personnelUser)
+            ->patch(route('requests.updateStatus', $request), [
+                'status' => RequestStatus::EnRoute->value,
+            ])
+            ->assertSessionHasErrors('status');
+
+        $this->assertDatabaseHas('emergency_requests', [
+            'id' => $request->id,
+            'status' => RequestStatus::Assigned->value,
+        ]);
+    }
+
     public function test_resolving_request_closes_assignment_and_releases_workload(): void
     {
         $official = User::factory()->create(['role' => UserRole::Official]);
