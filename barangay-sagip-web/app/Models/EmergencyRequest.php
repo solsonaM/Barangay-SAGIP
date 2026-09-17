@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\RequestStatus;
 use App\Enums\UrgencyLevel;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\ValidationException;
 
 class EmergencyRequest extends Model
 {
@@ -69,11 +70,58 @@ class EmergencyRequest extends Model
     }
 
     /**
+     * Determine whether the request can move from its current status to the
+     * requested status. This keeps the emergency-response lifecycle ordered
+     * and prevents reopening completed/cancelled requests.
+     */
+    public function canTransitionTo(RequestStatus $status): bool
+    {
+        $allowedTransitions = [
+            RequestStatus::Submitted->value => [
+                RequestStatus::NeedsReview,
+                RequestStatus::Validated,
+                RequestStatus::Cancelled,
+            ],
+            RequestStatus::NeedsReview->value => [
+                RequestStatus::Validated,
+                RequestStatus::Cancelled,
+            ],
+            RequestStatus::Validated->value => [
+                RequestStatus::Assigned,
+                RequestStatus::Cancelled,
+            ],
+            RequestStatus::Assigned->value => [
+                RequestStatus::EnRoute,
+                RequestStatus::Resolved,
+                RequestStatus::Cancelled,
+            ],
+            RequestStatus::EnRoute->value => [
+                RequestStatus::Resolved,
+                RequestStatus::Cancelled,
+            ],
+            RequestStatus::Resolved->value => [],
+            RequestStatus::Cancelled->value => [],
+        ];
+
+        return in_array($status, $allowedTransitions[$this->status->value] ?? [], true);
+    }
+
+    /**
      * Record a status change and append it to the tracking timeline
      * (Feature 7: Real-Time Urgent Status Tracking).
      */
     public function transitionTo(RequestStatus $status, ?string $note = null, ?int $changedBy = null): void
     {
+        if (! $this->canTransitionTo($status)) {
+            throw ValidationException::withMessages([
+                'status' => sprintf(
+                    'Request cannot transition from %s to %s.',
+                    $this->status->label(),
+                    $status->label()
+                ),
+            ]);
+        }
+
         $this->update(['status' => $status]);
         $this->statusLogs()->create([
             'status' => $status->value,
