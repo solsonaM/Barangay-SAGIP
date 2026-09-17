@@ -7,6 +7,8 @@ RUN npm install --ignore-scripts
 RUN npm run build
 
 FROM nginx:1.29-alpine
+RUN apk upgrade --no-cache
+
 COPY barangay-sagip-web/public /var/www/html/public
 COPY --from=frontend /app/public/build /var/www/html/public/build
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
