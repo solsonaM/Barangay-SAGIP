@@ -111,6 +111,12 @@ class EmergencyRequestController extends Controller
 
         $newStatus = RequestStatus::from($validated['status']);
 
+        if ($user->isPersonnel() && $newStatus === RequestStatus::Validated) {
+            throw ValidationException::withMessages([
+                'status' => 'Only an official can validate a request flagged for review.',
+            ]);
+        }
+
         DB::transaction(function () use ($emergencyRequest, $newStatus, $validated, $user) {
             $lockedRequest = EmergencyRequest::whereKey($emergencyRequest->id)
                 ->lockForUpdate()
