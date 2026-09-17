@@ -97,7 +97,8 @@ class EmergencyRequestController extends Controller
      */
     public function updateStatus(EmergencyRequest $emergencyRequest, Request $request): RedirectResponse
     {
-        abort_unless(Auth::user()->isOfficial() || Auth::user()->isPersonnel(), 403);
+        $user = Auth::user();
+        abort_unless($user->isOfficial() || $user->isPersonnel(), 403);
 
         $validated = $request->validate([
             'status' => ['required', 'in:validated,assigned,en_route,resolved,cancelled'],
@@ -106,7 +107,7 @@ class EmergencyRequestController extends Controller
 
         $newStatus = RequestStatus::from($validated['status']);
 
-        DB::transaction(function () use ($emergencyRequest, $newStatus, $validated) {
+        DB::transaction(function () use ($emergencyRequest, $newStatus, $validated, $user) {
             $lockedRequest = EmergencyRequest::whereKey($emergencyRequest->id)
                 ->lockForUpdate()
                 ->firstOrFail();
@@ -121,8 +122,22 @@ class EmergencyRequestController extends Controller
                 ]);
             }
 
-            if (in_array($newStatus, [RequestStatus::Resolved, RequestStatus::Cancelled], true)) {
+            $assignment = null;
+
+            if ($user->isPersonnel()) {
+                $personnel = $user->responsePersonnel()->first();
+
                 $assignment = $lockedRequest->currentAssignment()->lockForUpdate()->first();
+
+                if ($personnel === null || $assignment === null || $assignment->response_personnel_id !== $personnel->id) {
+                    throw ValidationException::withMessages([
+                        'status' => 'You can only update the status of a request assigned to you.',
+                    ]);
+                }
+            }
+
+            if (in_array($newStatus, [RequestStatus::Resolved, RequestStatus::Cancelled], true)) {
+                $assignment ??= $lockedRequest->currentAssignment()->lockForUpdate()->first();
 
                 if ($assignment !== null) {
                     $personnel = $assignment->responsePersonnel()->lockForUpdate()->first();
