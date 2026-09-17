@@ -10,9 +10,11 @@ use App\Notifications\RequestStatusUpdated;
 use App\Services\TokenizationClassificationService;
 use App\Services\ResponseAssignmentService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Illuminate\Validation\ValidationException;
 
 class EmergencyRequestController extends Controller
 {
@@ -93,7 +95,7 @@ class EmergencyRequestController extends Controller
      * Resolving or cancelling an active request also closes its assignment
      * and releases the responder's workload slot.
      */
-    public function updateStatus(EmergencyRequest $emergencyRequest, \Illuminate\Http\Request $request): RedirectResponse
+    public function updateStatus(EmergencyRequest $emergencyRequest, Request $request): RedirectResponse
     {
         abort_unless(Auth::user()->isOfficial() || Auth::user()->isPersonnel(), 403);
 
@@ -108,6 +110,16 @@ class EmergencyRequestController extends Controller
             $lockedRequest = EmergencyRequest::whereKey($emergencyRequest->id)
                 ->lockForUpdate()
                 ->firstOrFail();
+
+            if (! $lockedRequest->canTransitionTo($newStatus)) {
+                throw ValidationException::withMessages([
+                    'status' => sprintf(
+                        'Request cannot transition from %s to %s.',
+                        $lockedRequest->status->label(),
+                        $newStatus->label()
+                    ),
+                ]);
+            }
 
             if (in_array($newStatus, [RequestStatus::Resolved, RequestStatus::Cancelled], true)) {
                 $assignment = $lockedRequest->currentAssignment()->lockForUpdate()->first();
