@@ -36,8 +36,8 @@ class EmergencyRequestAuthorizationTest extends TestCase
         return ResponsePersonnel::create([
             'user_id' => $user->id,
             'name' => $user->name,
-            'specialization' => 'General Response',
-            'availability_status' => 'available',
+            'specialization' => 'general_assistance',
+            'is_available' => true,
             'current_workload' => 0,
             'latitude' => 13.5925,
             'longitude' => 124.2049,
@@ -50,7 +50,7 @@ class EmergencyRequestAuthorizationTest extends TestCase
             'emergency_request_id' => $request->id,
             'response_personnel_id' => $personnel->id,
             'assigned_by' => $personnel->user_id,
-            'assignment_type' => 'manual',
+            'was_manual_override' => true,
             'assigned_at' => now(),
         ]);
     }
