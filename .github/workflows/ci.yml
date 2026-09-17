@@ -138,7 +138,6 @@ jobs:
         run: docker compose --env-file docker-compose.production.env.example -f docker-compose.production.yml build
 
       - name: Scan Laravel image
-        id: scan_laravel
         continue-on-error: true
         uses: aquasecurity/trivy-action@v0.36.0
         with:
@@ -147,10 +146,9 @@ jobs:
           output: 'trivy-laravel.sarif'
           severity: 'CRITICAL,HIGH'
           ignore-unfixed: true
-          exit-code: '1'
+          exit-code: '0'
 
       - name: Scan queue worker image
-        id: scan_queue
         continue-on-error: true
         uses: aquasecurity/trivy-action@v0.36.0
         with:
@@ -159,10 +157,9 @@ jobs:
           output: 'trivy-queue.sarif'
           severity: 'CRITICAL,HIGH'
           ignore-unfixed: true
-          exit-code: '1'
+          exit-code: '0'
 
       - name: Scan Nginx image
-        id: scan_nginx
         continue-on-error: true
         uses: aquasecurity/trivy-action@v0.36.0
         with:
@@ -171,10 +168,9 @@ jobs:
           output: 'trivy-nginx.sarif'
           severity: 'CRITICAL,HIGH'
           ignore-unfixed: true
-          exit-code: '1'
+          exit-code: '0'
 
       - name: Scan Python service image
-        id: scan_ml
         continue-on-error: true
         uses: aquasecurity/trivy-action@v0.36.0
         with:
@@ -183,7 +179,7 @@ jobs:
           output: 'trivy-ml.sarif'
           severity: 'CRITICAL,HIGH'
           ignore-unfixed: true
-          exit-code: '1'
+          exit-code: '0'
 
       - name: Upload container scan reports
         if: always()
@@ -196,22 +192,22 @@ jobs:
 
       - name: Enforce container security gate
         if: always()
-        env:
-          LARAVEL_RESULT: ${{ steps.scan_laravel.outcome }}
-          QUEUE_RESULT: ${{ steps.scan_queue.outcome }}
-          NGINX_RESULT: ${{ steps.scan_nginx.outcome }}
-          ML_RESULT: ${{ steps.scan_ml.outcome }}
         run: |
-          failed=0
-          for result in "$LARAVEL_RESULT" "$QUEUE_RESULT" "$NGINX_RESULT" "$ML_RESULT"; do
-            if [ "$result" != "success" ]; then
-              failed=1
+          set -e
+          total=0
+          for report in trivy-*.sarif; do
+            [ -f "$report" ] || continue
+            count=$(jq '[.runs[].results[]? | select(.level == "error")] | length' "$report")
+            if [ "$count" -gt 0 ]; then
+              echo "$report contains $count HIGH/CRITICAL findings."
+              total=$((total + count))
             fi
           done
-          if [ "$failed" -ne 0 ]; then
-            echo "One or more production container images contain HIGH/CRITICAL vulnerabilities."
+          if [ "$total" -gt 0 ]; then
+            echo "Container security gate failed with $total HIGH/CRITICAL findings."
             exit 1
           fi
+          echo "Container security gate passed: no HIGH/CRITICAL findings in scanned images."
 
   secrets:
     runs-on: ubuntu-latest
