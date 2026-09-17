@@ -138,6 +138,8 @@ jobs:
         run: docker compose --env-file docker-compose.production.env.example -f docker-compose.production.yml build
 
       - name: Scan Laravel image
+        id: scan_laravel
+        continue-on-error: true
         uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: 'barangay-sagip-app'
@@ -148,6 +150,8 @@ jobs:
           exit-code: '1'
 
       - name: Scan queue worker image
+        id: scan_queue
+        continue-on-error: true
         uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: 'barangay-sagip-queue-worker'
@@ -158,6 +162,8 @@ jobs:
           exit-code: '1'
 
       - name: Scan Nginx image
+        id: scan_nginx
+        continue-on-error: true
         uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: 'barangay-sagip-nginx'
@@ -168,6 +174,8 @@ jobs:
           exit-code: '1'
 
       - name: Scan Python service image
+        id: scan_ml
+        continue-on-error: true
         uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: 'barangay-sagip-ml-service'
@@ -185,6 +193,25 @@ jobs:
           path: '*.sarif'
           if-no-files-found: ignore
           retention-days: 14
+
+      - name: Enforce container security gate
+        if: always()
+        env:
+          LARAVEL_RESULT: ${{ steps.scan_laravel.outcome }}
+          QUEUE_RESULT: ${{ steps.scan_queue.outcome }}
+          NGINX_RESULT: ${{ steps.scan_nginx.outcome }}
+          ML_RESULT: ${{ steps.scan_ml.outcome }}
+        run: |
+          failed=0
+          for result in "$LARAVEL_RESULT" "$QUEUE_RESULT" "$NGINX_RESULT" "$ML_RESULT"; do
+            if [ "$result" != "success" ]; then
+              failed=1
+            fi
+          done
+          if [ "$failed" -ne 0 ]; then
+            echo "One or more production container images contain HIGH/CRITICAL vulnerabilities."
+            exit 1
+          fi
 
   secrets:
     runs-on: ubuntu-latest
