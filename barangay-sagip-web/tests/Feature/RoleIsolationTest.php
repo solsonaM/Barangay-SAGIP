@@ -35,12 +35,12 @@ class RoleIsolationTest extends TestCase
             ->assertForbidden();
     }
 
-    public function test_resident_cannot_access_manual_assignment(): void
+    public function test_resident_cannot_access_official_reports(): void
     {
         $resident = User::factory()->create(['role' => UserRole::Resident]);
 
         $this->actingAs($resident)
-            ->get(route('personnel.index'))
+            ->get(route('reports.index'))
             ->assertForbidden();
     }
 }
