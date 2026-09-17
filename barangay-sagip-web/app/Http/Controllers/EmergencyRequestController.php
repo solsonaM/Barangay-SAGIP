@@ -79,9 +79,11 @@ class EmergencyRequestController extends Controller
             $query->where('resident_id', $user->id);
         }
 
-        $requests = $query->get()->sortByDesc(function (EmergencyRequest $r) {
-            return [$r->urgency?->sortWeight() ?? 0, $r->created_at->timestamp];
-        })->values();
+        $requests = $query
+            ->orderByRaw("CASE urgency\n                WHEN 'critical' THEN 4\n                WHEN 'high' THEN 3\n                WHEN 'average' THEN 2\n                WHEN 'low' THEN 1\n                ELSE 0\n            END DESC")
+            ->orderByDesc('created_at')
+            ->paginate(25)
+            ->withQueryString();
 
         return view('requests.index', ['requests' => $requests]);
     }
