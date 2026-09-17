@@ -79,6 +79,10 @@ class EmergencyRequestController extends Controller
 
         if ($user->isResident()) {
             $query->where('resident_id', $user->id);
+        } elseif ($user->isPersonnel()) {
+            $query->whereHas('currentAssignment.responsePersonnel', function ($assignmentQuery) use ($user) {
+                $assignmentQuery->where('user_id', $user->id);
+            });
         }
 
         $requests = $query
@@ -171,9 +175,21 @@ class EmergencyRequestController extends Controller
     {
         $user = Auth::user();
 
-        abort_unless(
-            $user->isOfficial() || $user->isPersonnel() || $emergencyRequest->resident_id === $user->id,
-            403
-        );
+        if ($user->isOfficial() || $emergencyRequest->resident_id === $user->id) {
+            return;
+        }
+
+        if ($user->isPersonnel()) {
+            $hasActiveAssignment = $emergencyRequest->currentAssignment()
+                ->whereHas('responsePersonnel', function ($personnelQuery) use ($user) {
+                    $personnelQuery->where('user_id', $user->id);
+                })
+                ->exists();
+
+            abort_unless($hasActiveAssignment, 403);
+            return;
+        }
+
+        abort(403);
     }
 }
