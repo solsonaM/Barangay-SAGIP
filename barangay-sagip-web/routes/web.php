@@ -40,7 +40,9 @@ Route::middleware('auth')->group(function () {
     Route::put('profile', [ResidentProfileController::class, 'update'])->name('residents.profile.update');
     Route::get('requests', [EmergencyRequestController::class, 'index'])->name('requests.index');
     Route::get('requests/create', [EmergencyRequestController::class, 'create'])->name('requests.create');
-    Route::post('requests', [EmergencyRequestController::class, 'store'])->name('requests.store');
+    Route::post('requests', [EmergencyRequestController::class, 'store'])
+        ->middleware('throttle:emergency-request')
+        ->name('requests.store');
     Route::get('requests/{emergencyRequest}', [EmergencyRequestController::class, 'show'])->name('requests.show');
     Route::get('map', [MapController::class, 'index'])->name('map.index');
     Route::get('map/data', [MapController::class, 'data'])->name('map.data');
