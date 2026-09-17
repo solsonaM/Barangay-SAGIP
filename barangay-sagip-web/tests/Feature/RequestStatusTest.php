@@ -8,7 +8,9 @@ use App\Models\EmergencyRequest;
 use App\Models\ResponseAssignment;
 use App\Models\ResponsePersonnel;
 use App\Models\User;
+use App\Notifications\RequestStatusUpdated;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class RequestStatusTest extends TestCase
@@ -33,6 +35,8 @@ class RequestStatusTest extends TestCase
 
     public function test_official_can_update_request_status(): void
     {
+        Notification::fake();
+
         $official = User::factory()->create(['role' => UserRole::Official]);
         $resident = User::factory()->create(['role' => UserRole::Resident]);
         $request = $this->createRequest($resident, RequestStatus::Validated);
@@ -54,6 +58,14 @@ class RequestStatusTest extends TestCase
             'status' => RequestStatus::Assigned->value,
             'changed_by' => $official->id,
         ]);
+
+        Notification::assertSentTo(
+            $resident,
+            RequestStatusUpdated::class,
+            fn (RequestStatusUpdated $notification) =>
+                $notification->emergencyRequest->id === $request->id
+                && $notification->newStatus === RequestStatus::Assigned->value
+        );
     }
 
     public function test_official_can_validate_a_request_flagged_for_review(): void
