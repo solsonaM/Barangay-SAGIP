@@ -10,6 +10,7 @@ use App\Services\TokenizationClassificationService;
 use App\Services\ResponseAssignmentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class EmergencyRequestController extends Controller
@@ -20,27 +21,17 @@ class EmergencyRequestController extends Controller
     ) {
     }
 
-    /**
-     * Feature 2: submission form.
-     */
     public function create(): View
     {
         return view('requests.create');
     }
 
-    /**
-     * Feature 2 (submit) -> Feature 3 (classify type) -> Feature 4 (classify
-     * urgency) -> Feature 5 (validate / flag for review) -> Feature 6
-     * (auto-assign when validation passes) -> Feature 7 (status timeline
-     * starts here) -> Feature 10 (notify resident).
-     */
     public function store(StoreEmergencyRequestRequest $request): RedirectResponse
     {
         $emergencyRequest = new EmergencyRequest($request->validated());
         $emergencyRequest->resident_id = Auth::id();
         $emergencyRequest->status = RequestStatus::Submitted;
 
-        // Features 3 & 4: ML classification (mutates the model in memory)
         $this->mlService->classifyAndApply($emergencyRequest);
 
         $emergencyRequest->save();
@@ -51,7 +42,6 @@ class EmergencyRequestController extends Controller
             'changed_by' => Auth::id(),
         ]);
 
-        // Feature 5: Request Validation
         if ($emergencyRequest->needs_review) {
             $emergencyRequest->transitionTo(
                 RequestStatus::NeedsReview,
@@ -59,8 +49,6 @@ class EmergencyRequestController extends Controller
             );
         } else {
             $emergencyRequest->transitionTo(RequestStatus::Validated, 'Auto-validated (high classification confidence).');
-
-            // Feature 6: attempt auto-assignment now that it's validated
             $this->assignmentService->autoAssign($emergencyRequest->fresh());
         }
 
@@ -71,10 +59,6 @@ class EmergencyRequestController extends Controller
             ->with('status', 'Your request has been submitted.');
     }
 
-    /**
-     * Feature 7: Real-time status tracking view (residents see their own
-     * request; officials/personnel see any request).
-     */
     public function show(EmergencyRequest $emergencyRequest): View
     {
         $this->authorizeView($emergencyRequest);
@@ -84,10 +68,6 @@ class EmergencyRequestController extends Controller
         return view('requests.show', ['emergencyRequest' => $emergencyRequest]);
     }
 
-    /**
-     * List view: residents see their own; officials/personnel see the
-     * barangay-wide queue sorted by urgency then recency (Feature 4 + 11).
-     */
     public function index(): View
     {
         $user = Auth::user();
@@ -106,8 +86,9 @@ class EmergencyRequestController extends Controller
     }
 
     /**
-     * Officials/personnel manually advance a request's status
-     * (Feature 7 write path).
+     * Officials/personnel manually advance a request's status.
+     * Resolving or cancelling an active request also closes its assignment
+     * and releases the responder's workload slot.
      */
     public function updateStatus(EmergencyRequest $emergencyRequest, \Illuminate\Http\Request $request): RedirectResponse
     {
@@ -118,14 +99,39 @@ class EmergencyRequestController extends Controller
             'note' => ['nullable', 'string', 'max:500'],
         ]);
 
-        $emergencyRequest->transitionTo(
-            RequestStatus::from($validated['status']),
-            $validated['note'] ?? null,
-            Auth::id()
-        );
+        $newStatus = RequestStatus::from($validated['status']);
 
+        DB::transaction(function () use ($emergencyRequest, $newStatus, $validated) {
+            $lockedRequest = EmergencyRequest::whereKey($emergencyRequest->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if (in_array($newStatus, [RequestStatus::Resolved, RequestStatus::Cancelled], true)) {
+                $assignment = $lockedRequest->currentAssignment()->lockForUpdate()->first();
+
+                if ($assignment !== null) {
+                    $personnel = $assignment->responsePersonnel()->lockForUpdate()->first();
+
+                    $assignment->update(['completed_at' => now()]);
+
+                    if ($personnel !== null) {
+                        ResponsePersonnel::whereKey($personnel->id)
+                            ->where('current_workload', '>', 0)
+                            ->decrement('current_workload');
+                    }
+                }
+            }
+
+            $lockedRequest->transitionTo(
+                $newStatus,
+                $validated['note'] ?? null,
+                Auth::id()
+            );
+        });
+
+        $emergencyRequest->refresh();
         $emergencyRequest->resident->notify(
-            new RequestStatusUpdated($emergencyRequest, $validated['status'])
+            new RequestStatusUpdated($emergencyRequest, $newStatus->value)
         );
 
         return back()->with('status', 'Status updated.');
