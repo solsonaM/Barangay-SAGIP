@@ -36,8 +36,6 @@ Route::post('admin/logout', [AdminAuthenticatedSessionController::class, 'destro
 
 Route::middleware('auth')->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('profile', [ResidentProfileController::class, 'edit'])->name('residents.profile.edit');
-    Route::put('profile', [ResidentProfileController::class, 'update'])->name('residents.profile.update');
     Route::get('requests', [EmergencyRequestController::class, 'index'])->name('requests.index');
     Route::get('requests/create', [EmergencyRequestController::class, 'create'])->name('requests.create');
     Route::post('requests', [EmergencyRequestController::class, 'store'])
@@ -49,6 +47,11 @@ Route::middleware('auth')->group(function () {
     Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('notifications/{id}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
     Route::post('notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.readAll');
+
+    Route::middleware('role:resident')->group(function () {
+        Route::get('profile', [ResidentProfileController::class, 'edit'])->name('residents.profile.edit');
+        Route::put('profile', [ResidentProfileController::class, 'update'])->name('residents.profile.update');
+    });
 
     Route::middleware('role:official,personnel')->group(function () {
         Route::patch('requests/{emergencyRequest}/status', [EmergencyRequestController::class, 'updateStatus'])
