@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\EmergencyRequest;
 use App\Models\ResponsePersonnel;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 /**
@@ -21,13 +22,27 @@ class MapController extends Controller
 
     public function data(): JsonResponse
     {
-        $requests = EmergencyRequest::whereNotIn('status', ['resolved', 'cancelled'])
-            ->select('id', 'category', 'urgency', 'status', 'latitude', 'longitude')
-            ->get();
+        $user = Auth::user();
 
-        $personnel = ResponsePersonnel::where('is_available', true)
-            ->select('id', 'name', 'specialization', 'latitude', 'longitude', 'current_workload')
-            ->get();
+        $requestsQuery = EmergencyRequest::whereNotIn('status', ['resolved', 'cancelled'])
+            ->select('id', 'category', 'urgency', 'status', 'latitude', 'longitude');
+
+        // Residents may see the location/status of only their own active
+        // requests. Operational personnel and officials may see the full
+        // response map.
+        if ($user->isResident()) {
+            $requestsQuery->where('resident_id', $user->id);
+        }
+
+        $requests = $requestsQuery->get();
+
+        $personnel = collect();
+
+        if ($user->isOfficial() || $user->isPersonnel()) {
+            $personnel = ResponsePersonnel::where('is_available', true)
+                ->select('id', 'name', 'specialization', 'latitude', 'longitude', 'current_workload')
+                ->get();
+        }
 
         return response()->json([
             'requests' => $requests,
