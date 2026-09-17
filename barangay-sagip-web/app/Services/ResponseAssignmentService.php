@@ -6,6 +6,7 @@ use App\Enums\RequestStatus;
 use App\Models\EmergencyRequest;
 use App\Models\ResponseAssignment;
 use App\Models\ResponsePersonnel;
+use App\Notifications\NewAssignmentNotification;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Validation\ValidationException;
 
@@ -55,7 +56,7 @@ class ResponseAssignmentService
         $top = collect($result['ranking'])->firstWhere('personnel_id', $result['recommended_personnel_id']);
         $personnelId = (int) $result['recommended_personnel_id'];
 
-        return $this->database->transaction(function () use ($request, $personnelId, $top) {
+        $assignment = $this->database->transaction(function () use ($request, $personnelId, $top) {
             $lockedRequest = EmergencyRequest::whereKey($request->id)->lockForUpdate()->firstOrFail();
 
             if ($lockedRequest->status !== RequestStatus::Validated || $lockedRequest->currentAssignment()->exists()) {
@@ -83,6 +84,13 @@ class ResponseAssignmentService
 
             return $assignment;
         });
+
+        if ($assignment !== null) {
+            $assignment->load('responsePersonnel.user', 'emergencyRequest');
+            $assignment->responsePersonnel?->user?->notify(new NewAssignmentNotification($assignment));
+        }
+
+        return $assignment;
     }
 
     public function manualAssign(EmergencyRequest $request, int $personnelId, int $officialUserId): ResponseAssignment
