@@ -83,9 +83,17 @@
                 'en_route' => 'En Route',
                 'resolved' => 'Resolved',
                 'cancelled' => 'Cancelled',
-            ])->filter(fn ($label, $status) => $emergencyRequest->canTransitionTo(\App\Enums\RequestStatus::from($status))))
+            ])->filter(fn ($label, $status) => $emergencyRequest->canTransitionTo(\App\Enums\RequestStatus::from($status)))
+                ->when(auth()->user()->isPersonnel() && $emergencyRequest->status === \App\Enums\RequestStatus::NeedsReview, fn ($statuses) => $statuses->except(['validated']))
+            )
 
-            @if($nextStatuses->isNotEmpty())
+            @if($emergencyRequest->status === \App\Enums\RequestStatus::NeedsReview && auth()->user()->isPersonnel())
+                <div class="border-t pt-4 mt-4">
+                    <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 text-sm rounded-md p-3">
+                        This request is waiting for official validation. A barangay official must review it before operational status can be advanced.
+                    </div>
+                </div>
+            @elseif($nextStatuses->isNotEmpty())
                 <div class="border-t pt-4 mt-4">
                     <h2 class="font-semibold text-navy mb-2">Update Status</h2>
                     <form method="POST" action="{{ route('requests.updateStatus', $emergencyRequest) }}" class="flex flex-col sm:flex-row gap-2">
