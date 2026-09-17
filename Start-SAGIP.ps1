@@ -55,12 +55,12 @@ Start-Process powershell.exe -ArgumentList @("-NoProfile","-NoExit","-Command",$
 Write-Host "`n==============================================" -ForegroundColor Green
 Write-Host "       BARANGAY SAGIP IS STARTING" -ForegroundColor Green
 Write-Host "==============================================" -ForegroundColor Green
-Write-Host "Application : http://barangay-sagip.test"
-Write-Host "Staff Login : http://barangay-sagip.test/admin/login"
+Write-Host "Application : https://barangay-sagip.test"
+Write-Host "Staff Login : https://barangay-sagip.test/admin/login"
 Write-Host "FastAPI     : http://127.0.0.1:8001"
 Write-Host "FastAPI Docs: http://127.0.0.1:8001/docs"
 Write-Host "`nThree service terminals have been opened."
 Write-Host "This startup window is no longer needed."
 Write-Host ""
-Start-Process "http://barangay-sagip.test"
+Start-Process "https://barangay-sagip.test"
 exit 0
