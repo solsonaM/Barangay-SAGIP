@@ -58,6 +58,7 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
 
         Auth::login($user);
+        $request->session()->regenerate();
 
         return redirect()->route('residents.profile.edit')
             ->with('status', 'Account created! Please complete your resident profile.');
