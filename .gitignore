@@ -2,3 +2,9 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+
+# Local environment files and secrets
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.production.example
