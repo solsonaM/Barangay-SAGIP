@@ -56,6 +56,65 @@ class RequestStatusTest extends TestCase
         ]);
     }
 
+    public function test_official_can_validate_a_request_flagged_for_review(): void
+    {
+        $official = User::factory()->create(['role' => UserRole::Official]);
+        $resident = User::factory()->create(['role' => UserRole::Resident]);
+        $request = $this->createRequest($resident, RequestStatus::NeedsReview);
+        $request->update([
+            'needs_review' => true,
+            'review_reason' => 'Low classification confidence.',
+        ]);
+
+        $this->actingAs($official)
+            ->patch(route('requests.updateStatus', $request), [
+                'status' => RequestStatus::Validated->value,
+                'note' => 'Official reviewed and validated.',
+            ])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('emergency_requests', [
+            'id' => $request->id,
+            'status' => RequestStatus::Validated->value,
+        ]);
+    }
+
+    public function test_personnel_cannot_validate_a_request_flagged_for_review(): void
+    {
+        $personnelUser = User::factory()->create(['role' => UserRole::Personnel]);
+        $resident = User::factory()->create(['role' => UserRole::Resident]);
+        $personnel = ResponsePersonnel::create([
+            'user_id' => $personnelUser->id,
+            'name' => 'Assigned Responder',
+            'specialization' => 'general_assistance',
+            'is_available' => true,
+            'current_workload' => 0,
+            'latitude' => 13.5925,
+            'longitude' => 124.2049,
+        ]);
+        $request = $this->createRequest($resident, RequestStatus::NeedsReview);
+        $request->update([
+            'needs_review' => true,
+            'review_reason' => 'Low classification confidence.',
+        ]);
+
+        $this->actingAs($personnelUser)
+            ->patch(route('requests.updateStatus', $request), [
+                'status' => RequestStatus::Validated->value,
+            ])
+            ->assertSessionHasErrors('status');
+
+        $this->assertDatabaseHas('emergency_requests', [
+            'id' => $request->id,
+            'status' => RequestStatus::NeedsReview->value,
+        ]);
+
+        $this->assertDatabaseHas('response_personnel', [
+            'id' => $personnel->id,
+            'current_workload' => 0,
+        ]);
+    }
+
     public function test_resident_cannot_update_request_status(): void
     {
         $resident = User::factory()->create(['role' => UserRole::Resident]);
