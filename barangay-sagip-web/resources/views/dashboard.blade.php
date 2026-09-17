@@ -64,6 +64,39 @@
         </div>
     </div>
 
+    @if($needsReviewRequests->isNotEmpty())
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg shadow-sm overflow-hidden mb-6">
+            <div class="px-4 py-3 border-b border-yellow-200 flex items-center justify-between">
+                <div>
+                    <h2 class="font-semibold text-yellow-900 text-sm">Requests Needing Official Review</h2>
+                    <p class="text-xs text-yellow-700 mt-1">These requests were flagged by classification and must be validated before assignment.</p>
+                </div>
+                <x-badge color="yellow">{{ $counts['needs_review'] }} pending</x-badge>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="text-yellow-800 text-left">
+                        <tr><th class="px-4 py-2">#</th><th class="px-4 py-2">Resident</th><th class="px-4 py-2">Category</th><th class="px-4 py-2">Urgency</th><th class="px-4 py-2">Reason</th><th></th></tr>
+                    </thead>
+                    <tbody class="divide-y divide-yellow-200">
+                        @foreach ($needsReviewRequests as $r)
+                            <tr class="hover:bg-yellow-100">
+                                <td class="px-4 py-2 font-medium">#{{ $r->id }}</td>
+                                <td class="px-4 py-2">{{ $r->resident->name }}</td>
+                                <td class="px-4 py-2 capitalize">{{ str_replace('_', ' ', $r->category ?? '—') }}</td>
+                                <td class="px-4 py-2">
+                                    @if($r->urgency)<x-badge :color="$r->urgency->badgeColor()">{{ $r->urgency->label() }}</x-badge>@else — @endif
+                                </td>
+                                <td class="px-4 py-2 text-xs max-w-xs">{{ $r->review_reason ?? 'Manual validation required.' }}</td>
+                                <td class="px-4 py-2 text-right"><a href="{{ route('requests.show', $r) }}" class="text-accent hover:underline whitespace-nowrap">Review →</a></td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    @endif
+
     <div class="bg-white rounded-lg shadow overflow-hidden">
         <div class="px-4 py-3 border-b font-semibold text-navy text-sm">Recent Requests</div>
         <div class="overflow-x-auto">
