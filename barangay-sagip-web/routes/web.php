@@ -13,9 +13,6 @@ use App\Http\Controllers\ResponseAssignmentController;
 use App\Http\Controllers\ResponsePersonnelController;
 use Illuminate\Support\Facades\Route;
 
-// Root always goes to the resident-facing login — this is a citizen-facing
-// app first; staff access lives at the separate, unlisted /admin/login below
-// and is never linked from here.
 Route::get('/', fn () => redirect()->route('login'));
 
 Route::middleware('guest')->group(function () {
@@ -38,18 +35,14 @@ Route::post('admin/logout', [AdminAuthenticatedSessionController::class, 'destro
 
 Route::middleware('auth')->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
     Route::get('profile', [ResidentProfileController::class, 'edit'])->name('residents.profile.edit');
     Route::put('profile', [ResidentProfileController::class, 'update'])->name('residents.profile.update');
-
     Route::get('requests', [EmergencyRequestController::class, 'index'])->name('requests.index');
     Route::get('requests/create', [EmergencyRequestController::class, 'create'])->name('requests.create');
     Route::post('requests', [EmergencyRequestController::class, 'store'])->name('requests.store');
     Route::get('requests/{emergencyRequest}', [EmergencyRequestController::class, 'show'])->name('requests.show');
-
     Route::get('map', [MapController::class, 'index'])->name('map.index');
     Route::get('map/data', [MapController::class, 'data'])->name('map.data');
-
     Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('notifications/{id}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
     Route::post('notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.readAll');
@@ -62,7 +55,6 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:official')->group(function () {
         Route::get('requests/{emergencyRequest}/assign', [ResponseAssignmentController::class, 'edit'])->name('requests.assign.edit');
         Route::post('requests/{emergencyRequest}/assign', [ResponseAssignmentController::class, 'store'])->name('requests.assign.store');
-
         Route::get('personnel', [ResponsePersonnelController::class, 'index'])->name('personnel.index');
         Route::get('personnel/create', [ResponsePersonnelController::class, 'create'])->name('personnel.create');
         Route::post('personnel', [ResponsePersonnelController::class, 'store'])->name('personnel.store');
@@ -71,7 +63,6 @@ Route::middleware('auth')->group(function () {
         Route::delete('personnel/{personnel}', [ResponsePersonnelController::class, 'destroy'])->name('personnel.destroy');
         Route::post('personnel/{personnel}/toggle-availability', [ResponsePersonnelController::class, 'toggleAvailability'])
             ->name('personnel.toggleAvailability');
-
         Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
         Route::get('reports/export', [ReportController::class, 'exportCsv'])->name('reports.export');
     });
