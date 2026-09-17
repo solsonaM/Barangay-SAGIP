@@ -17,9 +17,9 @@ Route::get('/', fn () => redirect()->route('login'));
 
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])->name('register');
-    Route::post('register', [RegisteredUserController::class, 'store']);
+    Route::post('register', [RegisteredUserController::class, 'store'])->middleware('throttle:login');
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
-    Route::post('login', [AuthenticatedSessionController::class, 'store']);
+    Route::post('login', [AuthenticatedSessionController::class, 'store'])->middleware('throttle:login');
 });
 
 Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
@@ -27,7 +27,8 @@ Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
 
 Route::middleware('guest')->group(function () {
     Route::get('admin/login', [AdminAuthenticatedSessionController::class, 'create'])->name('admin.login');
-    Route::post('admin/login', [AdminAuthenticatedSessionController::class, 'store'])->name('admin.login.store');
+    Route::post('admin/login', [AdminAuthenticatedSessionController::class, 'store'])
+        ->middleware('throttle:login')->name('admin.login.store');
 });
 
 Route::post('admin/logout', [AdminAuthenticatedSessionController::class, 'destroy'])
