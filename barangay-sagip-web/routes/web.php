@@ -37,7 +37,6 @@ Route::post('admin/logout', [AdminAuthenticatedSessionController::class, 'destro
 Route::middleware('auth')->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('requests', [EmergencyRequestController::class, 'index'])->name('requests.index');
-    Route::get('requests/{emergencyRequest}', [EmergencyRequestController::class, 'show'])->name('requests.show');
     Route::get('map', [MapController::class, 'index'])->name('map.index');
     Route::get('map/data', [MapController::class, 'data'])->name('map.data');
     Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
@@ -52,6 +51,8 @@ Route::middleware('auth')->group(function () {
             ->middleware('throttle:emergency-request')
             ->name('requests.store');
     });
+
+    Route::get('requests/{emergencyRequest}', [EmergencyRequestController::class, 'show'])->name('requests.show');
 
     Route::middleware('role:official,personnel')->group(function () {
         Route::patch('requests/{emergencyRequest}/status', [EmergencyRequestController::class, 'updateStatus'])
