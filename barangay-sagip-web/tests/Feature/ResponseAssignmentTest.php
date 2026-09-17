@@ -35,7 +35,10 @@ class ResponseAssignmentTest extends TestCase
 
     private function createPersonnel(array $overrides = []): ResponsePersonnel
     {
+        $user = User::factory()->create(['role' => UserRole::Personnel]);
+
         return ResponsePersonnel::create(array_merge([
+            'user_id' => $user->id,
             'name' => 'Test Responder',
             'specialization' => 'general_assistance',
             'is_available' => true,
