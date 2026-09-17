@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ResponsePersonnel;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 /**
@@ -69,9 +70,6 @@ class ResponsePersonnelController extends Controller
 
     public function destroy(ResponsePersonnel $personnel): RedirectResponse
     {
-        // Guard against deleting someone with an open assignment — resolve or
-        // reassign it first so a live request isn't left pointing at a
-        // deleted responder.
         if ($personnel->activeAssignments()->exists()) {
             return back()->with('status', "Can't delete {$personnel->name} — they have an active assignment. Resolve or reassign it first.");
         }
@@ -89,12 +87,18 @@ class ResponsePersonnelController extends Controller
         return back()->with('status', "Marked {$personnel->name} as " . ($personnel->is_available ? 'available' : 'unavailable') . '.');
     }
 
-    public function updateLocation(ResponsePersonnel $personnel, Request $request): RedirectResponse
+    /**
+     * Update the authenticated personnel's own live location.
+     * The personnel ID is deliberately not accepted from the request.
+     */
+    public function updateLocation(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'latitude' => ['required', 'numeric', 'between:-90,90'],
             'longitude' => ['required', 'numeric', 'between:-180,180'],
         ]);
+
+        $personnel = ResponsePersonnel::where('user_id', Auth::id())->firstOrFail();
 
         $personnel->update($validated + ['last_location_update' => now()]);
 
