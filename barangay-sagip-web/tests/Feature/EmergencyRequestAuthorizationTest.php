@@ -76,6 +76,24 @@ class EmergencyRequestAuthorizationTest extends TestCase
             ->assertOk();
     }
 
+    public function test_resident_does_not_see_responder_identity_on_own_request(): void
+    {
+        $resident = User::factory()->create(['role' => UserRole::Resident]);
+        $personnelUser = User::factory()->create([
+            'role' => UserRole::Personnel,
+            'name' => 'Private Responder Name',
+        ]);
+        $personnel = $this->createPersonnel($personnelUser);
+        $request = $this->createRequest($resident);
+        $this->assignRequest($request, $personnel);
+
+        $this->actingAs($resident)
+            ->get(route('requests.show', $request))
+            ->assertOk()
+            ->assertSee('A responder has been assigned to your request.')
+            ->assertDontSee('Private Responder Name');
+    }
+
     public function test_personnel_can_view_request_assigned_to_them(): void
     {
         $resident = User::factory()->create(['role' => UserRole::Resident]);
