@@ -53,6 +53,17 @@ class ResponseAssignmentTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_assignment_page_rejects_completed_request(): void
+    {
+        $official = User::factory()->create(['role' => UserRole::Official]);
+        $resident = User::factory()->create(['role' => UserRole::Resident]);
+        $request = $this->createRequest($resident, RequestStatus::Resolved);
+
+        $this->actingAs($official)
+            ->get(route('requests.assign.edit', $request))
+            ->assertSessionHasErrors('response_personnel_id');
+    }
+
     public function test_unavailable_personnel_cannot_be_manually_assigned(): void
     {
         $official = User::factory()->create(['role' => UserRole::Official]);
