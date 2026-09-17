@@ -52,14 +52,18 @@
             </div>
 
             <div class="col-span-2">
-                <label class="block text-sm font-medium mb-1">Address</label>
-                <textarea name="address" rows="2" required
+                <label class="block text-sm font-medium mb-1">Complete Home Address</label>
+                <textarea name="address" rows="3" required maxlength="500"
+                          placeholder="225, Provincial Road, Calatagan Tibang, Virac, Catanduanes"
                           class="w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent">{{ old('address', $profile->address ?? '') }}</textarea>
+                <p class="mt-1 text-xs text-gray-500">
+                    Format: House/Unit Number, Street/Road, Barangay, Municipality/City, Province
+                </p>
             </div>
 
             <div>
                 <label class="block text-sm font-medium mb-1">Household Members</label>
-                <input type="number" name="household_members_count" min="1"
+                <input type="number" name="household_members_count" min="1" max="50"
                        value="{{ old('household_members_count', $profile->household_members_count ?? 1) }}" required
                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent">
             </div>
@@ -70,21 +74,9 @@
                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent">
             </div>
 
-            <div>
+            <div class="col-span-2">
                 <label class="block text-sm font-medium mb-1">Emergency Contact Number</label>
                 <input type="text" name="emergency_contact_number" value="{{ old('emergency_contact_number', $profile->emergency_contact_number ?? '') }}"
-                       class="w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent">
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium mb-1">Home Latitude</label>
-                <input type="text" name="home_latitude" value="{{ old('home_latitude', $profile->home_latitude ?? '') }}"
-                       class="w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent">
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium mb-1">Home Longitude</label>
-                <input type="text" name="home_longitude" value="{{ old('home_longitude', $profile->home_longitude ?? '') }}"
                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent">
             </div>
         </div>
