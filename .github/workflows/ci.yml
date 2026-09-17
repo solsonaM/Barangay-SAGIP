@@ -28,6 +28,9 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
 
+      - name: Composer security audit
+        run: composer audit --no-interaction
+
       - name: Prepare environment
         run: |
           cp .env.example .env
@@ -46,10 +49,18 @@ jobs:
           DB_DATABASE: database/database.sqlite
         run: php artisan test
 
-      - name: Build frontend
+      - name: PHP syntax check
         run: |
-          npm install --ignore-scripts
-          npm run build
+          find app config database routes tests -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Install frontend dependencies
+        run: npm install --ignore-scripts
+
+      - name: NPM security audit
+        run: npm audit --audit-level=high
+
+      - name: Build frontend
+        run: npm run build
 
   python:
     runs-on: ubuntu-latest
@@ -70,6 +81,11 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Python dependency security audit
+        run: |
+          python -m pip install pip-audit
+          pip-audit -r requirements.txt
+
       - name: Compile Python sources
         run: python -m compileall -q .
 
@@ -78,3 +94,14 @@ jobs:
 
       - name: Run tokenization service tests
         run: python -m unittest discover -s tests -p 'test_*.py' -v
+
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Scan repository for secrets
+        uses: gitleaks/gitleaks-action@v2
