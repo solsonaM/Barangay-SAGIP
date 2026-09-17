@@ -13,17 +13,30 @@ class RequestStatusTest extends TestCase
 {
     use RefreshDatabase;
 
+    private function createRequest(User $resident, RequestStatus $status): EmergencyRequest
+    {
+        return EmergencyRequest::create([
+            'resident_id' => $resident->id,
+            'description' => 'Test emergency request.',
+            'category' => 'general_assistance',
+            'category_confidence' => 0.95,
+            'urgency' => 'average',
+            'urgency_confidence' => 0.95,
+            'needs_review' => false,
+            'latitude' => 13.5925,
+            'longitude' => 124.2049,
+            'status' => $status,
+        ]);
+    }
+
     public function test_official_can_update_request_status(): void
     {
         $official = User::factory()->create(['role' => UserRole::Official]);
         $resident = User::factory()->create(['role' => UserRole::Resident]);
-        $request = EmergencyRequest::factory()->create([
-            'resident_id' => $resident->id,
-            'status' => RequestStatus::Validated,
-        ]);
+        $request = $this->createRequest($resident, RequestStatus::Validated);
 
         $this->actingAs($official)
-            ->patch(route('requests.status.update', $request), [
+            ->patch(route('requests.updateStatus', $request), [
                 'status' => RequestStatus::EnRoute->value,
                 'note' => 'Responder is on the way.',
             ])
@@ -44,13 +57,10 @@ class RequestStatusTest extends TestCase
     public function test_resident_cannot_update_request_status(): void
     {
         $resident = User::factory()->create(['role' => UserRole::Resident]);
-        $request = EmergencyRequest::factory()->create([
-            'resident_id' => $resident->id,
-            'status' => RequestStatus::Validated,
-        ]);
+        $request = $this->createRequest($resident, RequestStatus::Validated);
 
         $this->actingAs($resident)
-            ->patch(route('requests.status.update', $request), [
+            ->patch(route('requests.updateStatus', $request), [
                 'status' => RequestStatus::Cancelled->value,
             ])
             ->assertForbidden();
