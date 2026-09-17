@@ -1,135 +1,156 @@
-# Barangay SAGIP — Full System (Laravel + Python ML Microservice)
+# Barangay SAGIP
 
-A machine learning-driven emergency assistance classification and response
-coordination platform, implementing all 12 features from the project
-proposal. Two parts:
+**Barangay SAGIP: A Machine Learning-Driven Emergency Assistance Classification and Response Coordination Platform for Smart Barangay Services.**
 
-- **`/laravel-app`** — PHP/Laravel application layer (migrations, models,
-  controllers, services, views). Meant to be merged into a fresh
-  `laravel new` project (see below for why).
-- **`/ml-service`** — Python FastAPI microservice with real, trained
-  scikit-learn models for request classification, urgency classification,
-  and response-assignment scoring. This part runs and has been tested
-  end-to-end already.
+Barangay SAGIP is a Laravel web application for resident assistance requests, emergency response coordination, personnel management, maps, notifications, dashboards, and reports. It uses a private Python FastAPI service for request classification, urgency classification, and response-assignment scoring.
 
----
+## Current architecture
 
-## Why `laravel-app` is an overlay, not a full install
-
-This was built in a sandboxed environment without registry access to
-`packagist.org`, so `composer install` could not be run here to generate
-Laravel's full framework skeleton (`vendor/`, `public/index.php`,
-`bootstrap/app.php`, etc.). Every file in `laravel-app/` is real,
-hand-written, syntax-checked PHP (all 53 files pass `php -l`), but you'll
-drop them into a freshly generated Laravel project rather than running this
-folder standalone. This takes about 10 minutes — steps below.
-
-## Feature → File Map
-
-| # | Feature | Where it lives |
-|---|---------|-----------------|
-| 1 | Resident Registration and Profiling | `Auth/RegisteredUserController`, `ResidentProfileController`, `resident_profiles` table |
-| 2 | Emergency/Assistance Request Submission | `EmergencyRequestController@create/store`, `requests/create.blade.php` |
-| 3 | ML-Based Request Classification | `MLClassificationService`, `ml-service/main.py: /classify/request-type` |
-| 4 | Urgency/Priority Classification | `MLClassificationService`, `ml-service/main.py: /classify/urgency` |
-| 5 | Request Validation | `needs_review` flag set in `classify/full`, low-confidence threshold in `ml-service/main.py` |
-| 6 | Response Assignment Classification | `ResponseAssignmentService`, `ResponseAssignmentController`, `ml-service/main.py: /assign/response` |
-| 7 | Real-Time Urgent Status Tracking | `EmergencyRequest::transitionTo()`, `request_status_logs` table, `requests/show.blade.php` |
-| 8 | Location Map Generator | `MapController`, `map/index.blade.php` (Leaflet) |
-| 9 | Response Personnel Management | `ResponsePersonnelController`, `personnel/*.blade.php` |
-| 10 | Alerts and Notifications | `RequestStatusUpdated`, `NewAssignmentNotification`, `NotificationController` |
-| 11 | Dashboards | `DashboardController`, `dashboard.blade.php` (role-conditional) |
-| 12 | Report Generator | `ReportController`, `reports/index.blade.php`, CSV export |
-
----
-
-## Part 1: Set up the ML microservice
-
-```bash
-cd ml-service
-python3 -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-
-# Generate the training dataset and train the classifiers
-python3 data/generate_dataset.py
-python3 train_classifier.py
-
-# Run the service
-uvicorn main:app --host 0.0.0.0 --port 8001
+```text
+Browser
+   |
+   v
+Nginx --> Laravel PHP-FPM --> PostgreSQL
+             |
+             +----------> Private FastAPI service
 ```
 
-Verify it's up: `curl http://127.0.0.1:8001/health` should return
-`{"status":"ok","models_loaded":true}`.
+The production Docker stack is defined in `docker-compose.production.yml` and contains:
 
-**About the dataset and accuracy:** `data/generate_dataset.py` builds a
-templated, researcher-constructed dataset (per the proposal's Section 6.2
-data-limitation disclosure) — ~378 rows of Filipino/Bikol/English
-code-switched sample reports. Evaluated with a template-held-out split (so
-near-duplicate phrasings never leak between train/test), the baseline
-models score roughly **~49% accuracy on request-type** and **~38% on
-urgency** — honest numbers for a small synthetic dataset, not inflated
-ones. This is a real starting point, not a finished model: swap in actual
-(anonymized) barangay incident logs as they become available, and consider
-a fine-tuned multilingual transformer (see proposal Section 9.1) once you
-have enough real data. Re-run `train_classifier.py` any time the dataset
-changes — it regenerates `models/training_metrics.json` with the new
-numbers for your thesis documentation.
+- Laravel PHP-FPM 8.4 application
+- Nginx web server
+- Python 3.12 FastAPI tokenization/classification service
+- PostgreSQL 17
+- Private Docker backend network
+- Persistent PostgreSQL volume
 
----
+Frontend assets are built into the production Docker images. The production Nginx container does not depend on an ignored `public/build` directory on the deployment host.
 
-## Part 2: Set up the Laravel application
+## Feature map
+
+| # | Feature | Main implementation |
+|---|---|---|
+| 1 | Resident Registration and Profiling | Authentication, `ResidentProfileController`, `resident_profiles` |
+| 2 | Emergency/Assistance Request Submission | `EmergencyRequestController`, request views |
+| 3 | ML-Based Request Classification | `TokenizationClassificationService`, FastAPI `/classify/request-type` |
+| 4 | Urgency/Priority Classification | FastAPI `/classify/urgency` |
+| 5 | Request Validation | Confidence threshold and `needs_review` handling |
+| 6 | Response Assignment Classification | `ResponseAssignmentService`, FastAPI `/assign/response` |
+| 7 | Urgent Status Tracking | Status transitions and request status logs |
+| 8 | Location Map Generator | `MapController`, Leaflet map |
+| 9 | Response Personnel Management | `ResponsePersonnelController` and personnel views |
+| 10 | Alerts and Notifications | Laravel notifications and notification controller |
+| 11 | Dashboards | Role-specific dashboard views |
+| 12 | Report Generator | `ReportController` and CSV reporting |
+
+## Important classification note
+
+The current repository implementation is a **deterministic tokenization and keyword/phrase matching service**, not a trained statistical model. It provides classification labels, heuristic confidence, review flags, and response-assignment scoring.
+
+Do not describe the current deployed implementation as a trained scikit-learn model. A trained model should only be claimed after an actual training pipeline, held-out evaluation, model artifact/versioning, and documented metrics have been added.
+
+## Local development
+
+### Laravel
 
 ```bash
-# 1. Generate a fresh Laravel 11 project (needs internet access to packagist.org)
-composer create-project laravel/laravel barangay-sagip-web
 cd barangay-sagip-web
-
-# 2. Install the one additional package used for API auth (optional but
-#    referenced in routes/api.php)
-composer require laravel/sanctum
-php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
-
-# 3. Copy this overlay's app-specific files into the fresh project,
-#    overwriting where they already exist (App\Models\User, routes/web.php,
-#    routes/api.php, config/services.php — merge the ml_service key into
-#    your existing services.php rather than overwriting it wholesale).
-cp -r ../laravel-app/app/* app/
-cp -r ../laravel-app/database/migrations/* database/migrations/
-cp ../laravel-app/database/seeders/DatabaseSeeder.php database/seeders/
-cp -r ../laravel-app/resources/views/* resources/views/
-cp ../laravel-app/routes/web.php routes/web.php
-cp ../laravel-app/routes/api.php routes/api.php
-# Merge (don't overwrite) the ml_service block from:
-#   ../laravel-app/config/services.php  ->  config/services.php
-
-# 4. Register the 'role' middleware alias — see
-#    ../laravel-app/bootstrap/app.php.snippet for exactly what to add to
-#    your bootstrap/app.php
-
-# 5. Environment
-cp ../laravel-app/.env.example .env
+composer install
+cp .env.example .env
 php artisan key:generate
-# Edit .env: set your DB credentials and confirm ML_SERVICE_URL matches
-# the FastAPI service from Part 1 (default http://127.0.0.1:8001)
-
-# 6. Database
 php artisan migrate --seed
-
-# 7. Run
+npm install
+npm run build
 php artisan serve
 ```
 
-Visit `http://127.0.0.1:8000`. Demo logins (seeded, password `password` for all):
+### Python service
 
-| Role | Email |
-|------|-------|
-| Official | `official@sagip.test` |
-| Personnel | `personnel@sagip.test` |
-| Resident | `resident@sagip.test` |
+```bash
+cd tokenization-service
+python -m venv .venv
 
-Log in as the resident, submit a request (try: *"tulong po, hindi na
-humihinga ang lolo ko"*) — with both servers running, you should see it
-auto-classified as Medical/Critical and auto-assigned to the nearest
-available medical-specialization personnel within a second or two. Log in
-as the official to see it on the Dashboard, Map, and Reports pages.
+# Windows
+.venv\Scripts\activate
+
+# macOS/Linux
+# source .venv/bin/activate
+
+pip install -r requirements.txt
+uvicorn main:app --host 127.0.0.1 --port 8001
+```
+
+The Laravel application should point to the local FastAPI service with `TOKENIZATION_SERVICE_URL=http://127.0.0.1:8001` and the matching `TOKENIZATION_SERVICE_KEY`.
+
+## Production deployment
+
+Production templates are provided for the application and Docker Compose configuration. Real secrets must remain outside Git.
+
+1. Copy `docker-compose.production.env.example` to `.env` beside `docker-compose.production.yml`.
+2. Generate strong unique values for `POSTGRES_PASSWORD` and `TOKENIZATION_SERVICE_KEY`.
+3. Copy `barangay-sagip-web/.env.production.example` to `barangay-sagip-web/.env.production` on the deployment host.
+4. Set `APP_ENV=production`, `APP_DEBUG=false`, the HTTPS `APP_URL`, PostgreSQL credentials, mail settings, and the internal ML service key.
+5. Keep PostgreSQL and the ML service unexposed to the public internet.
+6. Build and start the stack:
+
+```bash
+docker compose -f docker-compose.production.yml build
+docker compose -f docker-compose.production.yml up -d
+```
+
+7. Run the Laravel production setup:
+
+```bash
+docker compose -f docker-compose.production.yml exec app php artisan migrate --force
+docker compose -f docker-compose.production.yml exec app php artisan optimize
+```
+
+8. Put TLS/DNS in front of Nginx using the selected hosting provider, load balancer, or reverse proxy.
+9. Verify the Laravel `/up` health endpoint and the internal FastAPI `/health` endpoint.
+
+See `docker/README.md` for backup, restore testing, and rollback procedures.
+
+## CI/CD
+
+GitHub Actions validates:
+
+- Composer dependency installation and security audit
+- Laravel migrations and automated tests
+- PHP syntax
+- npm security audit and frontend build
+- Python dependency audit
+- Python compilation/imports and service tests
+- production Docker Compose configuration
+- production Docker image builds
+- repository secret scanning with Gitleaks
+
+The CI workflow is `.github/workflows/ci.yml`.
+
+## Security principles
+
+- Laravel login routes are rate-limited.
+- Resident request authorization is enforced server-side.
+- Personnel location updates are restricted to the authenticated personnel account.
+- Manual assignment validates personnel availability, workload, request status, and duplicate assignments.
+- Assignment operations use transactions and row locking where concurrent updates could otherwise corrupt workload state.
+- The FastAPI service requires `X-Service-Key` for protected endpoints.
+- Service failures fail safely into review handling rather than silently accepting an unavailable classification service.
+- Production secrets and `.env` files are excluded from Git.
+- PostgreSQL and the ML service are kept on the private Docker network.
+
+## Production readiness sequence
+
+Before a real public deployment, complete the remaining operational work:
+
+1. Build and validate the production images in CI.
+2. Deploy to a staging environment that matches production.
+3. Configure HTTPS, DNS, firewall/WAF, and secrets management.
+4. Configure production PostgreSQL backups and perform a real restore test.
+5. Decide and implement persistent storage for any resident-uploaded files if local filesystem storage is used.
+6. Confirm whether queued notifications require a dedicated queue worker.
+7. Add application monitoring, centralized logs, metrics, and alerts.
+8. Run load, authorization, and end-to-end tests in staging.
+9. Freeze and tag the exact release commit.
+10. Deploy with a tested rollback path.
+
+Never use the demo credentials or placeholder secrets in a production environment.
