@@ -73,26 +73,36 @@
         </ol>
 
         @if(auth()->user()->isOfficial() || auth()->user()->isPersonnel())
-            <div class="border-t pt-4 mt-4">
-                <h2 class="font-semibold text-navy mb-2">Update Status</h2>
-                <form method="POST" action="{{ route('requests.updateStatus', $emergencyRequest) }}" class="flex flex-col sm:flex-row gap-2">
-                    @csrf
-                    @method('PATCH')
-                    <select name="status" class="rounded-md border-gray-300 text-sm">
-                        @foreach (['validated','assigned','en_route','resolved','cancelled'] as $status)
-                            <option value="{{ $status }}">{{ ucfirst(str_replace('_', ' ', $status)) }}</option>
-                        @endforeach
-                    </select>
-                    <input type="text" name="note" placeholder="Optional note" class="flex-1 rounded-md border-gray-300 text-sm">
-                    <button class="bg-navy text-white text-sm rounded-md px-4 hover:bg-accent transition">Update</button>
-                </form>
+            @php($nextStatuses = collect([
+                'validated' => 'Validated',
+                'assigned' => 'Assigned',
+                'en_route' => 'En Route',
+                'resolved' => 'Resolved',
+                'cancelled' => 'Cancelled',
+            ])->filter(fn ($label, $status) => $emergencyRequest->canTransitionTo(\App\Enums\RequestStatus::from($status))))
 
-                @if(auth()->user()->isOfficial())
-                    <a href="{{ route('requests.assign.edit', $emergencyRequest) }}" class="inline-block mt-3 text-accent text-sm hover:underline">
-                        Review / reassign responder →
-                    </a>
-                @endif
-            </div>
+            @if($nextStatuses->isNotEmpty())
+                <div class="border-t pt-4 mt-4">
+                    <h2 class="font-semibold text-navy mb-2">Update Status</h2>
+                    <form method="POST" action="{{ route('requests.updateStatus', $emergencyRequest) }}" class="flex flex-col sm:flex-row gap-2">
+                        @csrf
+                        @method('PATCH')
+                        <select name="status" class="rounded-md border-gray-300 text-sm">
+                            @foreach ($nextStatuses as $status => $label)
+                                <option value="{{ $status }}">{{ $label }}</option>
+                            @endforeach
+                        </select>
+                        <input type="text" name="note" placeholder="Optional note" class="flex-1 rounded-md border-gray-300 text-sm">
+                        <button class="bg-navy text-white text-sm rounded-md px-4 hover:bg-accent transition">Update</button>
+                    </form>
+                </div>
+            @endif
+
+            @if(auth()->user()->isOfficial() && in_array($emergencyRequest->status, [\App\Enums\RequestStatus::Validated, \App\Enums\RequestStatus::Assigned], true))
+                <a href="{{ route('requests.assign.edit', $emergencyRequest) }}" class="inline-block mt-3 text-accent text-sm hover:underline">
+                    Review / reassign responder →
+                </a>
+            @endif
         @endif
     </div>
 
