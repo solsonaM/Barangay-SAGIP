@@ -39,19 +39,19 @@ class RequestStatusTest extends TestCase
 
         $this->actingAs($official)
             ->patch(route('requests.updateStatus', $request), [
-                'status' => RequestStatus::EnRoute->value,
-                'note' => 'Responder is on the way.',
+                'status' => RequestStatus::Assigned->value,
+                'note' => 'Responder assigned.',
             ])
             ->assertRedirect();
 
         $this->assertDatabaseHas('emergency_requests', [
             'id' => $request->id,
-            'status' => RequestStatus::EnRoute->value,
+            'status' => RequestStatus::Assigned->value,
         ]);
 
         $this->assertDatabaseHas('request_status_logs', [
             'emergency_request_id' => $request->id,
-            'status' => RequestStatus::EnRoute->value,
+            'status' => RequestStatus::Assigned->value,
             'changed_by' => $official->id,
         ]);
     }
@@ -66,6 +66,42 @@ class RequestStatusTest extends TestCase
                 'status' => RequestStatus::Cancelled->value,
             ])
             ->assertForbidden();
+    }
+
+    public function test_invalid_status_transition_is_rejected(): void
+    {
+        $official = User::factory()->create(['role' => UserRole::Official]);
+        $resident = User::factory()->create(['role' => UserRole::Resident]);
+        $request = $this->createRequest($resident, RequestStatus::Resolved);
+
+        $this->actingAs($official)
+            ->patch(route('requests.updateStatus', $request), [
+                'status' => RequestStatus::Assigned->value,
+            ])
+            ->assertSessionHasErrors('status');
+
+        $this->assertDatabaseHas('emergency_requests', [
+            'id' => $request->id,
+            'status' => RequestStatus::Resolved->value,
+        ]);
+    }
+
+    public function test_request_cannot_skip_assignment_before_en_route(): void
+    {
+        $official = User::factory()->create(['role' => UserRole::Official]);
+        $resident = User::factory()->create(['role' => UserRole::Resident]);
+        $request = $this->createRequest($resident, RequestStatus::Validated);
+
+        $this->actingAs($official)
+            ->patch(route('requests.updateStatus', $request), [
+                'status' => RequestStatus::EnRoute->value,
+            ])
+            ->assertSessionHasErrors('status');
+
+        $this->assertDatabaseHas('emergency_requests', [
+            'id' => $request->id,
+            'status' => RequestStatus::Validated->value,
+        ]);
     }
 
     public function test_resolving_request_closes_assignment_and_releases_workload(): void
