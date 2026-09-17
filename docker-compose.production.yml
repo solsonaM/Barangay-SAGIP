@@ -18,6 +18,19 @@ services:
     networks:
       - backend
 
+  queue-worker:
+    build:
+      context: .
+      dockerfile: docker/queue-worker/Dockerfile
+    restart: unless-stopped
+    env_file:
+      - barangay-sagip-web/.env.production
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend
+
   nginx:
     build:
       context: .
