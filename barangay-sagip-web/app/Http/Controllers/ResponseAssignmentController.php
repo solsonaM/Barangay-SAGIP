@@ -25,7 +25,10 @@ class ResponseAssignmentController extends Controller
 
     public function edit(EmergencyRequest $emergencyRequest): View
     {
-        $availablePersonnel = ResponsePersonnel::where('is_available', true)->orderBy('name')->get();
+        $availablePersonnel = ResponsePersonnel::where('is_available', true)
+            ->whereDoesntHave('activeAssignments')
+            ->orderBy('name')
+            ->get();
 
         return view('requests.assign', [
             'emergencyRequest' => $emergencyRequest->load('currentAssignment.responsePersonnel'),
