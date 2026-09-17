@@ -122,7 +122,21 @@ class EmergencyRequest extends Model
             ]);
         }
 
-        $this->update(['status' => $status]);
+        $attributes = ['status' => $status];
+
+        // Validation is a lifecycle event, not only a status label. Keep the
+        // audit fields synchronized and clear the review flag once an official
+        // or trusted automated path validates the request.
+        if ($status === RequestStatus::Validated) {
+            $attributes += [
+                'needs_review' => false,
+                'review_reason' => null,
+                'validated_at' => now(),
+                'validated_by' => $changedBy,
+            ];
+        }
+
+        $this->update($attributes);
         $this->statusLogs()->create([
             'status' => $status->value,
             'note' => $note,
