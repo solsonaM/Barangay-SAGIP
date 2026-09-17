@@ -98,7 +98,7 @@ Set the relevant `.env` values:
 APP_NAME="Barangay SAGIP"
 APP_ENV=local
 APP_DEBUG=true
-APP_URL=http://barangay-sagip.test
+APP_URL=https://barangay-sagip.test
 APP_TIMEZONE=Asia/Manila
 
 DB_CONNECTION=mysql
@@ -109,6 +109,7 @@ DB_USERNAME=barangay_sagip
 DB_PASSWORD=sagip-local-password
 
 SESSION_DRIVER=database
+SESSION_SECURE_COOKIE=true
 CACHE_STORE=database
 QUEUE_CONNECTION=database
 BROADCAST_CONNECTION=log
@@ -144,10 +145,12 @@ herd link barangay-sagip
 Open:
 
 ```text
-http://barangay-sagip.test
+https://barangay-sagip.test
 ```
 
 The resident login is `/login`. Barangay staff use `/admin/login`.
+
+**Use the HTTPS Herd URL.** Browser geolocation requires a secure context, so opening the application over plain HTTP will prevent resident GPS detection.
 
 Do not run `php artisan serve` when using Herd.
 
@@ -211,7 +214,7 @@ From the repository root:
 .\Start-SAGIP.ps1
 ```
 
-This checks/starts MySQL, starts Vite, starts the FastAPI service with the local service key, starts the Laravel queue worker, and opens the Laravel application. The three service terminals must remain open while developing.
+This checks/starts MySQL, starts Vite, starts the FastAPI service with the local service key, starts the Laravel queue worker, and opens the Laravel application over HTTPS. The three service terminals must remain open while developing.
 
 To stop the development services:
 
@@ -230,8 +233,8 @@ Vite                    -> Frontend development server
 FastAPI :8001           -> Tokenization/classification service
 Laravel queue worker    -> Queued jobs and notifications
 
-Application             -> http://barangay-sagip.test
-Staff login             -> http://barangay-sagip.test/admin/login
+Application             -> https://barangay-sagip.test
+Staff login             -> https://barangay-sagip.test/admin/login
 FastAPI health          -> http://127.0.0.1:8001/health
 ```
 
