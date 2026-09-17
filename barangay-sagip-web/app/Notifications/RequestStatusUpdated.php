@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use App\Models\EmergencyRequest;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 
@@ -16,7 +17,7 @@ use Illuminate\Notifications\Messages\MailMessage;
  * list (Feature 10) without requiring SMS/mail setup to demo; add 'mail' or
  * a custom 'sms' channel to `via()` once those are configured.
  */
-class RequestStatusUpdated extends Notification
+class RequestStatusUpdated extends Notification implements ShouldQueue
 {
     use Queueable;
 
