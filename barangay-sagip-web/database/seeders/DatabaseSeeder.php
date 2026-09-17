@@ -48,13 +48,11 @@ class DatabaseSeeder extends Seeder
 
         $resident->residentProfile()->create([
             'full_name' => 'Maria Santos',
-            'address' => 'Purok 2, Barangay Calatagan Tibang',
+            'address' => '225, Provincial Road, Calatagan Tibang, Virac, Catanduanes',
             'purok_sitio' => 'Purok 2',
             'household_members_count' => 4,
             'emergency_contact_name' => 'Jose Santos',
             'emergency_contact_number' => '09170000004',
-            'home_latitude' => 13.5925,
-            'home_longitude' => 124.2049,
         ]);
 
         // Link the seeded personnel user to a response_personnel record.
