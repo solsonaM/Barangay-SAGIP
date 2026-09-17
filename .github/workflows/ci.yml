@@ -75,3 +75,6 @@ jobs:
 
       - name: Import service modules
         run: python -c "import main; import tokenizer_classifier; print('Python service imports OK')"
+
+      - name: Run tokenization service tests
+        run: python -m unittest discover -s tests -p 'test_*.py' -v
