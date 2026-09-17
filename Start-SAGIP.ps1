@@ -5,6 +5,7 @@ $ProjectRoot = $PSScriptRoot
 $LaravelRoot = Join-Path $ProjectRoot "barangay-sagip-web"
 $FastApiRoot = Join-Path $ProjectRoot "tokenization-service"
 $VenvPython = Join-Path $FastApiRoot ".venv\Scripts\python.exe"
+$LaravelEnv = Join-Path $LaravelRoot ".env"
 
 function Fail($Message) {
     Write-Host "`n[ERROR] $Message`n" -ForegroundColor Red
@@ -14,6 +15,15 @@ function Fail($Message) {
 if (-not (Test-Path $LaravelRoot)) { Fail "Laravel project not found: $LaravelRoot" }
 if (-not (Test-Path $FastApiRoot)) { Fail "FastAPI project not found: $FastApiRoot" }
 if (-not (Test-Path $VenvPython)) { Fail "Python virtual environment not found: $VenvPython" }
+if (-not (Test-Path $LaravelEnv)) { Fail "Laravel .env not found. Copy barangay-sagip-web/.env.example to .env and configure it first." }
+
+# Read the local-only FastAPI service key from Laravel's ignored .env file.
+# Never store the key in this repository or in this script.
+$serviceKeyLine = Get-Content -LiteralPath $LaravelEnv | Where-Object { $_ -match '^TOKENIZATION_SERVICE_KEY\s*=' } | Select-Object -First 1
+if (-not $serviceKeyLine) { Fail "TOKENIZATION_SERVICE_KEY is missing from barangay-sagip-web/.env" }
+
+$serviceKey = ($serviceKeyLine -split '=', 2)[1].Trim().Trim('"').Trim("'")
+if ([string]::IsNullOrWhiteSpace($serviceKey)) { Fail "TOKENIZATION_SERVICE_KEY is empty in barangay-sagip-web/.env" }
 
 Write-Host "`n==============================================" -ForegroundColor Cyan
 Write-Host "       BARANGAY SAGIP - LOCAL STARTUP" -ForegroundColor Cyan
@@ -35,7 +45,7 @@ $viteCommand = "Set-Location -LiteralPath '$LaravelRoot'; npm run dev"
 Start-Process powershell.exe -ArgumentList @("-NoProfile","-NoExit","-Command",$viteCommand) -WindowStyle Normal
 
 Write-Host "[3/4] Starting FastAPI..." -ForegroundColor Yellow
-$fastApiCommand = "`$env:TOKENIZATION_SERVICE_KEY='sagip-local-service-key'; Set-Location -LiteralPath '$FastApiRoot'; & '$VenvPython' -m uvicorn main:app --host 127.0.0.1 --port 8001"
+$fastApiCommand = "`$env:TOKENIZATION_SERVICE_KEY='$serviceKey'; Set-Location -LiteralPath '$FastApiRoot'; & '$VenvPython' -m uvicorn main:app --host 127.0.0.1 --port 8001"
 Start-Process powershell.exe -ArgumentList @("-NoProfile","-NoExit","-Command",$fastApiCommand) -WindowStyle Normal
 
 Write-Host "[4/4] Starting Laravel queue..." -ForegroundColor Yellow
