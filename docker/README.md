@@ -4,25 +4,27 @@ Barangay SAGIP's production baseline is Nginx -> Laravel PHP-FPM, with PostgreSQ
 
 ## First deployment
 
-1. Build the images:
-   `docker compose -f docker-compose.production.yml build`
-2. Create the deployment `.env` beside `docker-compose.production.yml` using `docker-compose.production.env.example` as a template. Generate long random values for `POSTGRES_PASSWORD` and `TOKENIZATION_SERVICE_KEY`.
-3. Copy the real Laravel environment file to `barangay-sagip-web/.env.production`. Keep it outside Git. Set `APP_ENV=production`, `APP_DEBUG=false`, the real `APP_KEY`, PostgreSQL credentials, and the internal ML service key.
-4. Start the stack:
+1. Create the deployment `.env` beside `docker-compose.production.yml` using `docker-compose.production.env.example` as a template. Generate long random values for `POSTGRES_PASSWORD` and `TOKENIZATION_SERVICE_KEY`.
+2. Copy the real Laravel environment file to `barangay-sagip-web/.env.production`. Keep it outside Git. Set `APP_ENV=production`, `APP_DEBUG=false`, the real `APP_KEY`, PostgreSQL credentials, and the internal ML service key.
+3. Validate the Compose configuration:
+   `docker compose --env-file .env -f docker-compose.production.yml config`
+4. Build the images:
+   `docker compose --env-file .env -f docker-compose.production.yml build`
+5. Start the stack:
    `docker compose --env-file .env -f docker-compose.production.yml up -d`
-5. Run migrations from the application container:
+6. Run migrations from the application container:
    `docker compose --env-file .env -f docker-compose.production.yml exec app php artisan migrate --force`
-6. Cache the production configuration/routes/views:
+7. Cache the production configuration/routes/views:
    `docker compose --env-file .env -f docker-compose.production.yml exec app php artisan optimize`
-7. Verify the Laravel health endpoint through Nginx and verify the ML container health before opening external traffic.
+8. Verify the Laravel health endpoint through Nginx and verify the ML container health before opening external traffic.
 
 Do not publish PostgreSQL or the ML service ports. Put TLS termination and the public DNS name in front of Nginx (for example, a managed load balancer or reverse proxy).
 
 ## Backup
 
-Run a logical PostgreSQL backup from the deployment host or a trusted backup runner. Example:
+Run a logical PostgreSQL backup from the deployment host or a trusted backup runner. The database container supplies its own `POSTGRES_USER` and `POSTGRES_DB` environment variables:
 
-`docker compose --env-file .env -f docker-compose.production.yml exec -T postgres pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB" --format=custom > barangay-sagip-$(date +%Y%m%d-%H%M%S).dump`
+`docker compose --env-file .env -f docker-compose.production.yml exec -T postgres sh -c 'pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB" --format=custom' > barangay-sagip-$(date +%Y%m%d-%H%M%S).dump`
 
 Store backups outside the application host, encrypt them, apply a retention policy, and periodically perform a restore test. A backup that has never been restored is not a verified recovery plan.
 
