@@ -5,10 +5,10 @@ RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoload
 
 FROM node:22-alpine AS frontend
 WORKDIR /app
-COPY barangay-sagip-web/package.json barangay-sagip-web/package-lock.json ./
+COPY barangay-sagip-web/package.json ./
 COPY barangay-sagip-web/resources ./resources
 COPY barangay-sagip-web/vite.config.js ./vite.config.js
-RUN npm ci --ignore-scripts
+RUN npm install --ignore-scripts
 RUN npm run build
 
 FROM php:8.4-fpm-bookworm
