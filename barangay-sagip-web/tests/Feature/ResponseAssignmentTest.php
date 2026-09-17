@@ -8,7 +8,9 @@ use App\Models\EmergencyRequest;
 use App\Models\ResponseAssignment;
 use App\Models\ResponsePersonnel;
 use App\Models\User;
+use App\Notifications\NewAssignmentNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class ResponseAssignmentTest extends TestCase
@@ -125,6 +127,8 @@ class ResponseAssignmentTest extends TestCase
 
     public function test_manual_assignment_is_created_for_eligible_personnel(): void
     {
+        Notification::fake();
+
         $official = User::factory()->create(['role' => UserRole::Official]);
         $resident = User::factory()->create(['role' => UserRole::Resident]);
         $request = $this->createRequest($resident, RequestStatus::Validated);
@@ -152,5 +156,11 @@ class ResponseAssignmentTest extends TestCase
             'id' => $personnel->id,
             'current_workload' => 1,
         ]);
+
+        Notification::assertSentTo(
+            $personnel->user,
+            NewAssignmentNotification::class,
+            fn (NewAssignmentNotification $notification) => $notification->assignment->emergency_request_id === $request->id
+        );
     }
 }
