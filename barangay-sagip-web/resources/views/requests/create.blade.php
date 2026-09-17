@@ -117,8 +117,6 @@
 
         let watchId = null;
         let latestPosition = null;
-        let lastAddressLookup = null;
-        let addressLookupController = null;
 
         function setGpsError(message) {
             gpsError.textContent = message;
@@ -155,43 +153,6 @@
             satelliteMap.src = `https://maps.google.com/maps?q=${encodeURIComponent(`${lat},${lng}`)}&t=k&z=19&output=embed`;
         }
 
-        async function fetchAddress(lat, lng) {
-            if (lastAddressLookup &&
-                Math.abs(lastAddressLookup.lat - lat) < 0.00005 &&
-                Math.abs(lastAddressLookup.lng - lng) < 0.00005) {
-                return;
-            }
-
-            lastAddressLookup = { lat, lng };
-
-            if (addressLookupController) {
-                addressLookupController.abort();
-            }
-
-            addressLookupController = new AbortController();
-
-            try {
-                const response = await fetch(
-                    `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}&zoom=18`,
-                    {
-                        headers: { 'Accept': 'application/json' },
-                        signal: addressLookupController.signal
-                    }
-                );
-
-                if (!response.ok) {
-                    throw new Error('Reverse geocoding failed.');
-                }
-
-                const data = await response.json();
-                addressDisplay.textContent = data.display_name || `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-            } catch (error) {
-                if (error.name !== 'AbortError') {
-                    addressDisplay.textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-                }
-            }
-        }
-
         function handlePosition(position) {
             latestPosition = position;
 
@@ -199,9 +160,9 @@
 
             latitudeInput.value = latitude.toFixed(7);
             longitudeInput.value = longitude.toFixed(7);
+            addressDisplay.textContent = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
 
             updateMap(latitude, longitude);
-            fetchAddress(latitude, longitude);
 
             clearGpsError();
             hideOverlay();
