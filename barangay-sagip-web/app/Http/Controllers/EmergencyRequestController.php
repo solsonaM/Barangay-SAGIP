@@ -34,9 +34,9 @@ class EmergencyRequestController extends Controller
         $emergencyRequest = new EmergencyRequest($request->validated());
         $emergencyRequest->resident_id = Auth::id();
         $emergencyRequest->status = RequestStatus::Submitted;
+        $emergencyRequest->save();
 
         $this->mlService->classifyAndApply($emergencyRequest);
-
         $emergencyRequest->save();
 
         $emergencyRequest->statusLogs()->create([
