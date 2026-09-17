@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\RequestStatus;
 use App\Models\EmergencyRequest;
 use App\Models\ResponsePersonnel;
 use App\Notifications\NewAssignmentNotification;
@@ -9,6 +10,7 @@ use App\Services\ResponseAssignmentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 /**
@@ -25,6 +27,12 @@ class ResponseAssignmentController extends Controller
 
     public function edit(EmergencyRequest $emergencyRequest): View
     {
+        if (! in_array($emergencyRequest->status, [RequestStatus::Validated, RequestStatus::Assigned], true)) {
+            throw ValidationException::withMessages([
+                'response_personnel_id' => 'This request cannot be assigned in its current status.',
+            ]);
+        }
+
         $availablePersonnel = ResponsePersonnel::where('is_available', true)
             ->whereDoesntHave('activeAssignments')
             ->orderBy('name')
