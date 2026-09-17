@@ -15,13 +15,38 @@ class ResponseAssignmentTest extends TestCase
 {
     use RefreshDatabase;
 
+    private function createRequest(User $resident, RequestStatus $status): EmergencyRequest
+    {
+        return EmergencyRequest::create([
+            'resident_id' => $resident->id,
+            'description' => 'Test emergency request.',
+            'category' => 'general_assistance',
+            'category_confidence' => 0.95,
+            'urgency' => 'average',
+            'urgency_confidence' => 0.95,
+            'needs_review' => false,
+            'latitude' => 13.5925,
+            'longitude' => 124.2049,
+            'status' => $status,
+        ]);
+    }
+
+    private function createPersonnel(array $overrides = []): ResponsePersonnel
+    {
+        return ResponsePersonnel::create(array_merge([
+            'name' => 'Test Responder',
+            'specialization' => 'general_assistance',
+            'is_available' => true,
+            'current_workload' => 0,
+            'latitude' => 13.5925,
+            'longitude' => 124.2049,
+        ], $overrides));
+    }
+
     public function test_resident_cannot_access_manual_assignment_page(): void
     {
         $resident = User::factory()->create(['role' => UserRole::Resident]);
-        $request = EmergencyRequest::factory()->create([
-            'resident_id' => $resident->id,
-            'status' => RequestStatus::Validated,
-        ]);
+        $request = $this->createRequest($resident, RequestStatus::Validated);
 
         $this->actingAs($resident)
             ->get(route('requests.assign.edit', $request))
@@ -32,11 +57,8 @@ class ResponseAssignmentTest extends TestCase
     {
         $official = User::factory()->create(['role' => UserRole::Official]);
         $resident = User::factory()->create(['role' => UserRole::Resident]);
-        $request = EmergencyRequest::factory()->create([
-            'resident_id' => $resident->id,
-            'status' => RequestStatus::Validated,
-        ]);
-        $personnel = ResponsePersonnel::factory()->create(['is_available' => false]);
+        $request = $this->createRequest($resident, RequestStatus::Validated);
+        $personnel = $this->createPersonnel(['is_available' => false]);
 
         $this->actingAs($official)
             ->post(route('requests.assign.store', $request), [
@@ -54,19 +76,11 @@ class ResponseAssignmentTest extends TestCase
     {
         $official = User::factory()->create(['role' => UserRole::Official]);
         $resident = User::factory()->create(['role' => UserRole::Resident]);
-        $request = EmergencyRequest::factory()->create([
-            'resident_id' => $resident->id,
-            'status' => RequestStatus::Validated,
-        ]);
-        $otherRequest = EmergencyRequest::factory()->create([
-            'resident_id' => $resident->id,
-            'status' => RequestStatus::Assigned,
-        ]);
-        $personnel = ResponsePersonnel::factory()->create([
-            'is_available' => true,
-            'current_workload' => 1,
-        ]);
-        ResponseAssignment::factory()->create([
+        $request = $this->createRequest($resident, RequestStatus::Validated);
+        $otherRequest = $this->createRequest($resident, RequestStatus::Assigned);
+        $personnel = $this->createPersonnel(['current_workload' => 1]);
+
+        ResponseAssignment::create([
             'emergency_request_id' => $otherRequest->id,
             'response_personnel_id' => $personnel->id,
             'completed_at' => null,
@@ -88,11 +102,8 @@ class ResponseAssignmentTest extends TestCase
     {
         $official = User::factory()->create(['role' => UserRole::Official]);
         $resident = User::factory()->create(['role' => UserRole::Resident]);
-        $request = EmergencyRequest::factory()->create([
-            'resident_id' => $resident->id,
-            'status' => RequestStatus::Submitted,
-        ]);
-        $personnel = ResponsePersonnel::factory()->create(['is_available' => true]);
+        $request = $this->createRequest($resident, RequestStatus::Submitted);
+        $personnel = $this->createPersonnel();
 
         $this->actingAs($official)
             ->post(route('requests.assign.store', $request), [
@@ -105,14 +116,8 @@ class ResponseAssignmentTest extends TestCase
     {
         $official = User::factory()->create(['role' => UserRole::Official]);
         $resident = User::factory()->create(['role' => UserRole::Resident]);
-        $request = EmergencyRequest::factory()->create([
-            'resident_id' => $resident->id,
-            'status' => RequestStatus::Validated,
-        ]);
-        $personnel = ResponsePersonnel::factory()->create([
-            'is_available' => true,
-            'current_workload' => 0,
-        ]);
+        $request = $this->createRequest($resident, RequestStatus::Validated);
+        $personnel = $this->createPersonnel();
 
         $this->actingAs($official)
             ->post(route('requests.assign.store', $request), [
