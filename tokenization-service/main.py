@@ -1,29 +1,16 @@
 """
 Barangay SAGIP — Tokenization Microservice
 
-Serves the three classification/coordination features from the proposal:
-  - Feature 3: Request Classification             -> POST /classify/request-type
-  - Feature 4: Urgency / Priority Classification   -> POST /classify/urgency
-  - Feature 6: Response Assignment                 -> POST /assign/response
-  - Convenience combined endpoint                  -> POST /classify/full
-  - Health check                                   -> GET  /health
-
-IMPORTANT — architecture note: this service no longer trains or loads any
-machine learning model. Request-type and urgency classification are done by
-tokenization / keyword-phrase matching (see tokenizer_classifier.py) — the
-text is normalized, matched against hand-curated keyword dictionaries per
-label, and scored by match count. There is nothing here to train, and
-"confidence" below is a match-share heuristic, not a statistical model
-probability — see tokenizer_classifier.py's docstring for the full
-explanation of how scoring works.
-
-Called by the Laravel app's App\Services\MLClassificationService over HTTP.
-Run with:  uvicorn main:app --host 0.0.0.0 --port 8001
+Serves request classification, urgency classification, response assignment,
+and a health endpoint. Request-type and urgency classification use the
+repository's transparent tokenization / keyword-phrase matching approach.
 """
+import hmac
 import math
+import os
 from typing import List, Optional
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI, Header, HTTPException
 from pydantic import BaseModel, Field
 
 from tokenizer_classifier import classify_category, classify_urgency
@@ -31,13 +18,9 @@ from tokenizer_classifier import classify_category, classify_urgency
 app = FastAPI(
     title="Barangay SAGIP Tokenization Service",
     description="Keyword-tokenization request classification, urgency scoring, and response assignment for Barangay SAGIP.",
-    version="2.0.0",
+    version="2.1.0",
 )
 
-
-# ---------------------------------------------------------------------------
-# Schemas
-# ---------------------------------------------------------------------------
 
 class ClassifyTextIn(BaseModel):
     text: str = Field(..., min_length=1, description="Free-text request description")
@@ -52,11 +35,11 @@ class ClassificationOut(BaseModel):
 class Personnel(BaseModel):
     id: int
     name: str
-    specialization: str  # e.g. "medical", "fire", "peace_order", "disaster", "general_assistance"
+    specialization: str
     latitude: float
     longitude: float
     is_available: bool = True
-    current_workload: int = 0  # number of active assignments right now
+    current_workload: int = 0
 
 
 class AssignRequestIn(BaseModel):
@@ -81,7 +64,7 @@ class AssignResponseOut(BaseModel):
 
 
 class FullClassifyIn(BaseModel):
-    text: str
+    text: str = Field(..., min_length=1)
 
 
 class FullClassifyOut(BaseModel):
@@ -91,15 +74,17 @@ class FullClassifyOut(BaseModel):
     review_reason: Optional[str] = None
 
 
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
-
 URGENCY_WEIGHT = {"critical": 1.0, "high": 0.75, "average": 0.5, "low": 0.25}
-
-# Below this match-share, or on zero keyword matches, Feature 5 (Request
-# Validation) flags the report for human review instead of auto-dispatching.
 LOW_CONFIDENCE_THRESHOLD = 0.45
+
+
+def require_service_key(x_service_key: Optional[str] = Header(default=None)) -> None:
+    """Authenticate Laravel-to-FastAPI service-to-service calls."""
+    expected = os.getenv("TOKENIZATION_SERVICE_KEY")
+    if not expected:
+        raise HTTPException(status_code=503, detail="Service authentication is not configured")
+    if not x_service_key or not hmac.compare_digest(x_service_key, expected):
+        raise HTTPException(status_code=401, detail="Unauthorized")
 
 
 def _haversine_km(lat1, lon1, lat2, lon2) -> float:
@@ -111,60 +96,44 @@ def _haversine_km(lat1, lon1, lat2, lon2) -> float:
     return R * 2 * math.asin(math.sqrt(a))
 
 
-# ---------------------------------------------------------------------------
-# Endpoints
-# ---------------------------------------------------------------------------
-
 @app.get("/health")
 def health():
     return {"status": "ok", "classifier": "tokenization (keyword-matching)"}
 
 
-@app.post("/classify/request-type", response_model=ClassificationOut)
+@app.post("/classify/request-type", response_model=ClassificationOut, dependencies=[Depends(require_service_key)])
 def classify_request_type(payload: ClassifyTextIn):
     label, confidence, scores = classify_category(payload.text)
     return ClassificationOut(label=label, confidence=confidence, all_scores=scores)
 
 
-@app.post("/classify/urgency", response_model=ClassificationOut)
+@app.post("/classify/urgency", response_model=ClassificationOut, dependencies=[Depends(require_service_key)])
 def classify_urgency_endpoint(payload: ClassifyTextIn):
     label, confidence, scores = classify_urgency(payload.text)
     return ClassificationOut(label=label, confidence=confidence, all_scores=scores)
 
 
-@app.post("/classify/full", response_model=FullClassifyOut)
+@app.post("/classify/full", response_model=FullClassifyOut, dependencies=[Depends(require_service_key)])
 def classify_full(payload: FullClassifyIn):
-    """
-    Convenience endpoint: runs both tokenization classifiers in one call and
-    applies the Feature 5 (Request Validation) low-match-share review rule,
-    so Laravel only needs a single HTTP round trip when a resident submits
-    a request.
-    """
     cat_label, cat_confidence, cat_scores = classify_category(payload.text)
     urg_label, urg_confidence, urg_scores = classify_urgency(payload.text)
 
     category = ClassificationOut(label=cat_label, confidence=cat_confidence, all_scores=cat_scores)
     urgency = ClassificationOut(label=urg_label, confidence=urg_confidence, all_scores=urg_scores)
 
-    needs_review = False
-    reason = None
-    if category.confidence < LOW_CONFIDENCE_THRESHOLD or urgency.confidence < LOW_CONFIDENCE_THRESHOLD:
-        needs_review = True
-        reason = "No confident keyword match — route to human validation before dispatch."
+    needs_review = category.confidence < LOW_CONFIDENCE_THRESHOLD or urgency.confidence < LOW_CONFIDENCE_THRESHOLD
+    reason = "No confident keyword match — route to human validation before dispatch." if needs_review else None
 
-    return FullClassifyOut(category=category, urgency=urgency, needs_review=needs_review, review_reason=reason)
+    return FullClassifyOut(
+        category=category,
+        urgency=urgency,
+        needs_review=needs_review,
+        review_reason=reason,
+    )
 
 
-@app.post("/assign/response", response_model=AssignResponseOut)
+@app.post("/assign/response", response_model=AssignResponseOut, dependencies=[Depends(require_service_key)])
 def assign_response(payload: AssignRequestIn):
-    """
-    Feature 6: Response Assignment.
-
-    Implemented as a transparent, weighted scoring/ranking function over the
-    available personnel supplied by Laravel (proximity, specialization match,
-    urgency, and current workload) — not a trained model, keeping the
-    assignment auditable for barangay officials.
-    """
     urgency_weight = URGENCY_WEIGHT.get(payload.request_urgency, 0.5)
     ranked: List[RankedCandidate] = []
 
@@ -175,17 +144,14 @@ def assign_response(payload: AssignRequestIn):
             payload.request_latitude, payload.request_longitude, c.latitude, c.longitude
         )
         specialization_match = c.specialization == payload.request_category
-
-        # Score components (each normalized to roughly 0-1, higher is better):
-        proximity_score = 1 / (1 + distance_km)          # closer = higher
+        proximity_score = 1 / (1 + distance_km)
         specialization_score = 1.0 if specialization_match else 0.3
-        workload_score = 1 / (1 + c.current_workload)     # less busy = higher
-
+        workload_score = 1 / (1 + c.current_workload)
         score = (
             0.4 * proximity_score
             + 0.35 * specialization_score
             + 0.25 * workload_score
-        ) * (0.5 + 0.5 * urgency_weight)  # urgent requests weight the top score higher
+        ) * (0.5 + 0.5 * urgency_weight)
 
         ranked.append(RankedCandidate(
             personnel_id=c.id,
@@ -197,5 +163,4 @@ def assign_response(payload: AssignRequestIn):
 
     ranked.sort(key=lambda r: r.score, reverse=True)
     recommended = ranked[0].personnel_id if ranked else None
-
     return AssignResponseOut(recommended_personnel_id=recommended, ranking=ranked)
