@@ -1,6 +1,6 @@
 # Barangay SAGIP
 
-**Barangay SAGIP: An Emergency Assistance Classification and Response Coordination Platform for Smart Barangay Services.**
+**Barangay SAGIP: A Tokenization-based Emergency Assistance Classification and Response Coordination Platform for Smart Barangay Services.**
 
 Barangay SAGIP is a Laravel web application for resident assistance requests, emergency response coordination, personnel management, maps, notifications, dashboards, and reports. It uses a private Python FastAPI service for tokenization-based request classification, urgency classification, and response-assignment scoring.
 
