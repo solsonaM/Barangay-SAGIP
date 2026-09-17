@@ -1,0 +1,17 @@
+.git
+.github
+.gitignore
+.env
+.env.*
+!.env.example
+!.env.production.example
+vendor
+node_modules
+barangay-sagip-web/storage/logs/*
+barangay-sagip-web/storage/framework/cache/data/*
+barangay-sagip-web/storage/framework/sessions/*
+barangay-sagip-web/storage/framework/views/*
+tokenization-service/.venv
+tokenization-service/__pycache__
+tokenization-service/.pytest_cache
+*.pyc
