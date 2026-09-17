@@ -42,7 +42,9 @@ class DashboardController extends Controller
         // Official / barangay-wide overview
         $counts = [
             'total' => EmergencyRequest::count(),
-            'needs_review' => EmergencyRequest::where('needs_review', true)->count(),
+            'needs_review' => EmergencyRequest::where('needs_review', true)
+                ->where('status', 'needs_review')
+                ->count(),
             'critical_open' => EmergencyRequest::where('urgency', 'critical')
                 ->whereNotIn('status', ['resolved', 'cancelled'])
                 ->count(),
@@ -57,6 +59,13 @@ class DashboardController extends Controller
             ->groupBy('category')
             ->pluck('total', 'category');
 
+        $needsReviewRequests = EmergencyRequest::with(['resident'])
+            ->where('needs_review', true)
+            ->where('status', 'needs_review')
+            ->latest()
+            ->limit(10)
+            ->get();
+
         $recentRequests = EmergencyRequest::with(['resident', 'currentAssignment.responsePersonnel'])
             ->latest()
             ->limit(15)
@@ -66,6 +75,7 @@ class DashboardController extends Controller
             'role' => 'official',
             'counts' => $counts,
             'categoryBreakdown' => $categoryBreakdown,
+            'needsReviewRequests' => $needsReviewRequests,
             'recentRequests' => $recentRequests,
         ]);
     }
