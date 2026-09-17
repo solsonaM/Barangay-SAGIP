@@ -15,6 +15,7 @@ FROM php:8.4-fpm-bookworm
 WORKDIR /var/www/html
 
 RUN apt-get update \
+    && apt-get upgrade -y \
     && apt-get install -y --no-install-recommends libpq-dev libicu-dev libzip-dev libonig-dev unzip \
     && docker-php-ext-install bcmath intl mbstring opcache pdo_pgsql zip \
     && rm -rf /var/lib/apt/lists/*
