@@ -43,4 +43,22 @@ class RoleIsolationTest extends TestCase
             ->get(route('reports.index'))
             ->assertForbidden();
     }
+
+    public function test_personnel_cannot_access_resident_profile(): void
+    {
+        $personnel = User::factory()->create(['role' => UserRole::Personnel]);
+
+        $this->actingAs($personnel)
+            ->get(route('residents.profile.edit'))
+            ->assertForbidden();
+    }
+
+    public function test_official_cannot_access_resident_profile(): void
+    {
+        $official = User::factory()->create(['role' => UserRole::Official]);
+
+        $this->actingAs($official)
+            ->get(route('residents.profile.edit'))
+            ->assertForbidden();
+    }
 }
