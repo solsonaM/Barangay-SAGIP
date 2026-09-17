@@ -8,6 +8,9 @@ on:
 permissions:
   contents: read
 
+env:
+  COMPOSE_PROJECT_NAME: barangay-sagip
+
 jobs:
   laravel:
     runs-on: ubuntu-latest
@@ -142,6 +145,7 @@ jobs:
           output: 'trivy-laravel.sarif'
           severity: 'CRITICAL,HIGH'
           ignore-unfixed: true
+          exit-code: '1'
 
       - name: Scan queue worker image
         uses: aquasecurity/trivy-action@v0.36.0
@@ -151,6 +155,7 @@ jobs:
           output: 'trivy-queue.sarif'
           severity: 'CRITICAL,HIGH'
           ignore-unfixed: true
+          exit-code: '1'
 
       - name: Scan Nginx image
         uses: aquasecurity/trivy-action@v0.36.0
@@ -160,6 +165,7 @@ jobs:
           output: 'trivy-nginx.sarif'
           severity: 'CRITICAL,HIGH'
           ignore-unfixed: true
+          exit-code: '1'
 
       - name: Scan Python service image
         uses: aquasecurity/trivy-action@v0.36.0
@@ -169,6 +175,7 @@ jobs:
           output: 'trivy-ml.sarif'
           severity: 'CRITICAL,HIGH'
           ignore-unfixed: true
+          exit-code: '1'
 
       - name: Upload container scan reports
         if: always()
