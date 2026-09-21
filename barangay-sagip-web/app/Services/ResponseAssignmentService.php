@@ -47,7 +47,7 @@ class ResponseAssignmentService
             return null;
         }
 
-        $result = $this->mlService->assignResponse($request, $candidates);
+        $result = $this->classificationService->assignResponse($request, $candidates);
 
         if ($result === null || empty($result['recommended_personnel_id'])) {
             return null;
