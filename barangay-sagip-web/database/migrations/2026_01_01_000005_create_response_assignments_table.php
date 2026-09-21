@@ -8,7 +8,7 @@ return new class extends Migration
 {
     /**
      * Feature 6: Response Assignment Classification — records which
-     * responder the ML/scoring service recommended (or an official
+     * responder the tokenization/scoring service recommended (or an official
      * manually assigned) for a given request, and the score that produced
      * the recommendation, for auditability.
      */
