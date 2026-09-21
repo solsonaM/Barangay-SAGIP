@@ -17,7 +17,7 @@ use Illuminate\View\View;
  * Feature 6: Response Assignment Classification — manual override path.
  * Auto-assignment lives in ResponseAssignmentService::autoAssign(), called
  * from EmergencyRequestController::store(). This controller covers the case
- * where an official wants to review the ML recommendation and reassign.
+ * where an official wants to review the classification-based recommendation and reassign.
  */
 class ResponseAssignmentController extends Controller
 {
