@@ -8,7 +8,7 @@ return new class extends Migration
 {
     /**
      * Feature 2: Emergency/Assistance Request Submission
-     * Feature 3: ML-Based Request Classification    (category, category_confidence)
+     * Feature 3: Tokenization-Based Request Classification    (category, category_confidence)
      * Feature 4: Urgency/Priority Classification     (urgency, urgency_confidence)
      * Feature 5: Request Validation                  (needs_review, validated_at, validated_by)
      * Feature 7: Real-Time Urgent Status Tracking     (status)
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->foreignId('resident_id')->constrained('users')->cascadeOnDelete();
             $table->text('description');
 
-            // Feature 3 & 4 outputs (nullable until the ML service responds)
+            // Feature 3 & 4 outputs (nullable until the tokenization service responds)
             $table->string('category')->nullable();
             $table->decimal('category_confidence', 5, 4)->nullable();
             $table->string('urgency')->nullable();
