@@ -13,7 +13,7 @@ use Illuminate\Validation\ValidationException;
 /**
  * Feature 6: Response Assignment Classification.
  *
- * Gathers available response personnel, sends them to the ML service's
+ * Gathers available response personnel, sends them to the tokenization service's
  * scoring/ranking endpoint alongside the request, and persists the
  * recommended assignment. Officials can still override the recommendation
  * manually (see ResponseAssignmentController::store()).
@@ -21,7 +21,7 @@ use Illuminate\Validation\ValidationException;
 class ResponseAssignmentService
 {
     public function __construct(
-        protected TokenizationClassificationService $mlService,
+        protected TokenizationClassificationService $classificationService,
         protected DatabaseManager $database,
     ) {
     }
@@ -80,7 +80,7 @@ class ResponseAssignmentService
 
             $personnel->increment('current_workload');
 
-            $lockedRequest->transitionTo(RequestStatus::Assigned, 'Auto-assigned via ML response-assignment scoring.');
+            $lockedRequest->transitionTo(RequestStatus::Assigned, 'Auto-assigned via tokenization response-assignment scoring.');
 
             return $assignment;
         });
