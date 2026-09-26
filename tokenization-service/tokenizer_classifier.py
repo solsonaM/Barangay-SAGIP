@@ -1,43 +1,17 @@
 """
-Barangay SAGIP — Tokenization-Based Request Classifier
-========================================================
+Barangay SAGIP — Rule-Based Tokenization Classifier
+===================================================
 
-Per project direction, this replaces the earlier scikit-learn (TF-IDF +
-Calibrated LinearSVC) classifiers with a pure tokenization / keyword-matching
-approach. No model is trained and no model file is loaded — classification
-is done entirely by matching tokens/phrases from the incoming report text
-against hand-curated keyword dictionaries for each category and urgency
-level, then scoring by match count.
+The project intentionally uses a deterministic tokenization and keyword/
+phrase-matching architecture. Incoming text is normalized, then matched
+against hand-curated dictionaries for request categories and urgency levels.
 
-This is a deterministic, fully-transparent, and fully-auditable approach:
-every classification can be explained by pointing at exactly which phrases
-in the resident's text matched which category/urgency. There is nothing to
-train, no accuracy/precision/recall to report from a held-out split, and no
-dataset-generation step is needed anymore.
-
-How it works
-------------
-1. Normalize the input text (lowercase, strip punctuation into token
-   boundaries).
-2. For each category (or urgency level), count how many of its keyword
-   phrases appear as substrings of the normalized text.
-3. The category/urgency with the most matches wins. "Confidence" here is
-   not a statistical probability — it's the winning label's share of total
-   matches across all labels, which is a reasonable, explainable proxy but
-   should be described as such (not as calibrated model confidence) in any
-   documentation or thesis write-up.
-4. If nothing matches at all, fall back to the lowest-commitment label
-   (general_assistance / average) and flag needs_review, same as before.
+There is no training pipeline, learned artifact, or statistical inference.
+Every classification can be audited by inspecting the matched rules.
 """
+
 import re
 from typing import Dict, List, Tuple
-
-# ---------------------------------------------------------------------------
-# Keyword dictionaries
-# ---------------------------------------------------------------------------
-# Phrases (not just single words) are matched as substrings against the
-# normalized text, since multi-word Filipino/Bikol phrases carry meaning
-# that single tokens often don't (e.g. "hindi humihinga" vs "hindi").
 
 CATEGORY_KEYWORDS: Dict[str, List[str]] = {
     "medical": [
@@ -94,18 +68,17 @@ URGENCY_KEYWORDS: Dict[str, List[str]] = {
 
 
 def _normalize(text: str) -> str:
-    """Lowercase and collapse whitespace/punctuation for substring matching."""
+    """Lowercase and collapse whitespace/punctuation into token boundaries."""
     text = text.lower()
     text = re.sub(r"[^\w\s\-]", " ", text)
-    text = re.sub(r"\s+", " ", text).strip()
-    return text
+    return re.sub(r"\s+", " ", text).strip()
 
 
 def _score(text: str, keyword_dict: Dict[str, List[str]]) -> Dict[str, int]:
     """
-    Count keyword-phrase matches per label, using word-boundary matching
-    (not raw substring search) so a short keyword like "ulan" (rain) can't
-    falsely match inside an unrelated word like "ambulansya".
+    Count matching rules per label. Word boundaries prevent short keywords
+    from matching inside unrelated words (for example, "ulan" inside a
+    longer unrelated token).
     """
     scores = {}
     for label, phrases in keyword_dict.items():
@@ -118,12 +91,21 @@ def _score(text: str, keyword_dict: Dict[str, List[str]]) -> Dict[str, int]:
     return scores
 
 
-def classify(text: str, keyword_dict: Dict[str, List[str]], fallback_label: str) -> Tuple[str, float, Dict[str, float]]:
+def classify(
+    text: str,
+    keyword_dict: Dict[str, List[str]],
+    fallback_label: str,
+) -> Tuple[str, float, Dict[str, float]]:
     """
-    Returns (winning_label, confidence, all_scores) where confidence is the
-    winning label's share of total matches (not a statistical probability).
-    Falls back to `fallback_label` with confidence 0.0 when nothing matches
-    at all, which the caller uses to trigger the Feature 5 review flag.
+    Return (winning_label, confidence, all_scores).
+
+    Confidence is the winning label's share of all matched rules, not a
+    statistical probability. When no rule matches, the fallback label is
+    returned with 0.0 confidence; the API layer converts that into review.
+
+    If multiple labels tie for the highest match count, the first declared
+    label remains the deterministic display value, but the API layer flags
+    the result for human review.
     """
     normalized = _normalize(text)
     raw_scores = _score(normalized, keyword_dict)
@@ -133,7 +115,10 @@ def classify(text: str, keyword_dict: Dict[str, List[str]], fallback_label: str)
         all_scores = {label: 0.0 for label in keyword_dict}
         return fallback_label, 0.0, all_scores
 
-    all_scores = {label: round(count / total_matches, 4) for label, count in raw_scores.items()}
+    all_scores = {
+        label: round(count / total_matches, 4)
+        for label, count in raw_scores.items()
+    }
     winning_label = max(all_scores, key=all_scores.get)
     return winning_label, all_scores[winning_label], all_scores
 

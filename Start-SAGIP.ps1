@@ -25,6 +25,19 @@ if (-not $serviceKeyLine) { Fail "TOKENIZATION_SERVICE_KEY is missing from baran
 $serviceKey = ($serviceKeyLine -split '=', 2)[1].Trim().Trim('"').Trim("'")
 if ([string]::IsNullOrWhiteSpace($serviceKey)) { Fail "TOKENIZATION_SERVICE_KEY is empty in barangay-sagip-web/.env" }
 
+function Read-OptionalEnvValue($Name, $DefaultValue) {
+    $line = Get-Content -LiteralPath $LaravelEnv | Where-Object { $_ -match "^$Name\s*=" } | Select-Object -First 1
+    if (-not $line) { return $DefaultValue }
+    $value = ($line -split '=', 2)[1].Trim().Trim('"').Trim("'")
+    if ([string]::IsNullOrWhiteSpace($value)) { return $DefaultValue }
+    return $value
+}
+
+$confidenceThreshold = Read-OptionalEnvValue "TOKENIZATION_CONFIDENCE_THRESHOLD" "0.45"
+$assignmentMinScore = Read-OptionalEnvValue "TOKENIZATION_ASSIGNMENT_MIN_SCORE" "0.35"
+$assignmentMinMargin = Read-OptionalEnvValue "TOKENIZATION_ASSIGNMENT_MIN_MARGIN" "0.05"
+$rulesetVersion = Read-OptionalEnvValue "TOKENIZATION_RULESET_VERSION" "1.0.0"
+
 Write-Host "`n==============================================" -ForegroundColor Cyan
 Write-Host "       BARANGAY SAGIP - LOCAL STARTUP" -ForegroundColor Cyan
 Write-Host "==============================================" -ForegroundColor Cyan
@@ -45,7 +58,7 @@ $viteCommand = "Set-Location -LiteralPath '$LaravelRoot'; npm run dev"
 Start-Process powershell.exe -ArgumentList @("-NoProfile","-NoExit","-Command",$viteCommand) -WindowStyle Normal
 
 Write-Host "[3/4] Starting FastAPI..." -ForegroundColor Yellow
-$fastApiCommand = "`$env:TOKENIZATION_SERVICE_KEY='$serviceKey'; Set-Location -LiteralPath '$FastApiRoot'; & '$VenvPython' -m uvicorn main:app --host 127.0.0.1 --port 8001"
+$fastApiCommand = "`$env:TOKENIZATION_SERVICE_KEY='$serviceKey'; `$env:TOKENIZATION_CONFIDENCE_THRESHOLD='$confidenceThreshold'; `$env:TOKENIZATION_ASSIGNMENT_MIN_SCORE='$assignmentMinScore'; `$env:TOKENIZATION_ASSIGNMENT_MIN_MARGIN='$assignmentMinMargin'; `$env:TOKENIZATION_RULESET_VERSION='$rulesetVersion'; Set-Location -LiteralPath '$FastApiRoot'; & '$VenvPython' -m uvicorn main:app --host 127.0.0.1 --port 8001"
 Start-Process powershell.exe -ArgumentList @("-NoProfile","-NoExit","-Command",$fastApiCommand) -WindowStyle Normal
 
 Write-Host "[4/4] Starting Laravel queue..." -ForegroundColor Yellow
