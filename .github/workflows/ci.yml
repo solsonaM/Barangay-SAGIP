@@ -176,7 +176,7 @@ jobs:
         with:
           image-ref: 'barangay-sagip-tokenization-service'
           format: 'sarif'
-          output: 'trivy-ml.sarif'
+          output: 'trivy-tokenization.sarif'
           severity: 'CRITICAL,HIGH'
           ignore-unfixed: true
           exit-code: '0'

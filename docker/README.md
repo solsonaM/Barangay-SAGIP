@@ -30,7 +30,7 @@ Do not bypass a failed security or database test to ship a release. Fix the find
    `docker compose --env-file .env -f docker-compose.production.yml exec app php artisan migrate --force`
 7. Cache the production configuration/routes/views:
    `docker compose --env-file .env -f docker-compose.production.yml exec app php artisan optimize`
-8. Verify the Laravel health endpoint through Nginx and verify the ML container health before opening external traffic.
+8. Verify the Laravel health endpoint through Nginx and verify the tokenization service health before opening external traffic.
 9. Confirm the queue worker is running and process at least one non-critical queued notification in staging before production traffic is enabled.
 
 Do not publish PostgreSQL or the tokenization service ports. Put TLS termination, DNS, WAF/rate limiting, and the public DNS name in front of Nginx (for example, a managed load balancer or reverse proxy). Enable HSTS only at the HTTPS edge after the hostname is confirmed to be HTTPS-only.

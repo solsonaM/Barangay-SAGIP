@@ -56,7 +56,7 @@ services:
     networks:
       - backend
 
-  ml-service:
+  tokenization-service:
     build:
       context: ./tokenization-service
     init: true
