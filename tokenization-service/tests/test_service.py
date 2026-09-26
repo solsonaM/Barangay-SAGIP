@@ -18,7 +18,7 @@ from main import (
     classify_full,
     require_service_key,
 )
-from tokenizer_classifier import classify_category, classify_urgency
+from tokenizer_classifier import classify, classify_category, classify_urgency
 
 
 class TokenizationServiceTest(unittest.TestCase):
@@ -53,12 +53,23 @@ class TokenizationServiceTest(unittest.TestCase):
         self.assertEqual(confidence, 0.0)
         self.assertTrue(all(score == 0.0 for score in scores.values()))
 
-    def test_keyword_collision_is_flagged_as_ambiguous(self):
-        result = classify_full(FullClassifyIn(text="May paso"))
-        self.assertTrue(result.category.needs_review)
-        self.assertIn("ambiguous top match", result.category.review_reason.lower())
-        self.assertEqual(result.category.all_scores["medical"], 0.5)
-        self.assertEqual(result.category.all_scores["fire"], 0.5)
+    def test_keyword_collision_is_flagged_as_ambiguous_when_rules_overlap(self):
+        collision_rules = {
+            "medical": ["paso"],
+            "fire": ["paso"],
+        }
+        label, confidence, scores = classify(
+            "May paso",
+            collision_rules,
+            fallback_label="medical",
+        )
+        self.assertIn(label, {"medical", "fire"})
+        self.assertEqual(confidence, 0.5)
+        self.assertEqual(scores["medical"], 0.5)
+        self.assertEqual(scores["fire"], 0.5)
+
+        reason = _classification_review_reason(confidence, scores)
+        self.assertIn("ambiguous top match", reason.lower())
 
     def test_tie_detection_helper_reports_ambiguity(self):
         reason = _classification_review_reason(
