@@ -6,13 +6,11 @@ Barangay SAGIP is a Laravel web application for resident assistance requests, em
 
 ## Classification approach
 
-The current repository does **not** use machine learning or a trained statistical model.
+Barangay SAGIP's final classification architecture is **tokenization-based and rule-based**. It is an intentional deterministic design: the FastAPI service normalizes resident request text, matches hand-curated keywords and phrases, converts the matches into transparent scores, and escalates ambiguous or low-confidence cases for human review.
 
-Barangay SAGIP uses a **tokenization-based classification approach for emergency and assistance request processing**. The FastAPI service tokenizes and normalizes request text, then applies deterministic keyword and phrase matching rules to classify request type and urgency and to support response-assignment scoring.
+Request-type and urgency confidence values are **heuristic match-share scores**, not statistical probabilities. Response assignment uses a separate weighted suitability score based on responder proximity, specialization match, workload, and request urgency. A recommendation is withheld when the configured assignment score or ranking margin is not sufficient.
 
-The service can return classification labels, heuristic confidence values, review flags, and response-assignment scores. These outputs are rule-based and should not be described as predictions from a trained ML model.
-
-A future trained model should only be described as part of the system after an actual training pipeline, held-out evaluation, model artifact/versioning, and documented performance metrics have been implemented.
+The complete ruleset, scoring formulas, thresholds, tie handling, and review conditions are versioned in [`docs/tokenization-classification-ruleset.md`](docs/tokenization-classification-ruleset.md). This documentation is the authoritative technical specification for the classifier.
 
 ## Architecture
 
@@ -38,7 +36,7 @@ Production uses Docker Compose, PHP-FPM 8.4, Nginx, Python 3.12, and PostgreSQL 
 | 3 | Tokenization-Based Request Classification | `TokenizationClassificationService`, FastAPI `/classify/request-type` |
 | 4 | Urgency/Priority Classification | FastAPI `/classify/urgency` |
 | 5 | Request Validation | Confidence threshold and `needs_review` handling |
-| 6 | Response Assignment Classification | `ResponseAssignmentService`, FastAPI `/assign/response` |
+| 6 | Response Assignment Rule Scoring | `ResponseAssignmentService`, FastAPI `/assign/response` |
 | 7 | Urgent Status Tracking | Status transitions and request status logs |
 | 8 | Location Map Generator | `MapController`, Leaflet map |
 | 9 | Response Personnel Management | `ResponsePersonnelController` and personnel views |

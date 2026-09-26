@@ -170,11 +170,11 @@ jobs:
           ignore-unfixed: true
           exit-code: '0'
 
-      - name: Scan Python service image
+      - name: Scan tokenization service image
         continue-on-error: true
         uses: aquasecurity/trivy-action@v0.36.0
         with:
-          image-ref: 'barangay-sagip-ml-service'
+          image-ref: 'barangay-sagip-tokenization-service'
           format: 'sarif'
           output: 'trivy-ml.sarif'
           severity: 'CRITICAL,HIGH'

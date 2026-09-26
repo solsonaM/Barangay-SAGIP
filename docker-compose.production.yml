@@ -12,13 +12,13 @@ services:
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
-      TOKENIZATION_SERVICE_URL: http://ml-service:8001
+      TOKENIZATION_SERVICE_URL: http://tokenization-service:8001
     volumes:
       - laravel_storage:/var/www/html/storage
     depends_on:
       postgres:
         condition: service_healthy
-      ml-service:
+      tokenization-service:
         condition: service_healthy
     networks:
       - backend

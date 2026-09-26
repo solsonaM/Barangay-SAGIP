@@ -21,7 +21,7 @@ use Illuminate\Validation\ValidationException;
 class ResponseAssignmentService
 {
     public function __construct(
-        protected TokenizationClassificationService $mlService,
+        protected TokenizationClassificationService $tokenizationService,
         protected DatabaseManager $database,
     ) {
     }
@@ -47,7 +47,7 @@ class ResponseAssignmentService
             return null;
         }
 
-        $result = $this->mlService->assignResponse($request, $candidates);
+        $result = $this->tokenizationService->assignResponse($request, $candidates);
 
         if ($result === null || empty($result['recommended_personnel_id'])) {
             return null;
@@ -80,7 +80,7 @@ class ResponseAssignmentService
 
             $personnel->increment('current_workload');
 
-            $lockedRequest->transitionTo(RequestStatus::Assigned, 'Auto-assigned via ML response-assignment scoring.');
+            $lockedRequest->transitionTo(RequestStatus::Assigned, 'Auto-assigned via tokenization response-assignment scoring.');
 
             return $assignment;
         });

@@ -19,7 +19,7 @@ Do not bypass a failed security or database test to ship a release. Fix the find
 ## First deployment
 
 1. Create the deployment `.env` beside `docker-compose.production.yml` using `docker-compose.production.env.example` as a template. Generate long random values for `POSTGRES_PASSWORD` and `TOKENIZATION_SERVICE_KEY`.
-2. Copy the real Laravel environment file to `barangay-sagip-web/.env.production`. Keep it outside Git. Set `APP_ENV=production`, `APP_DEBUG=false`, the real `APP_KEY`, PostgreSQL credentials, and the internal ML service key.
+2. Copy the real Laravel environment file to `barangay-sagip-web/.env.production`. Keep it outside Git. Set `APP_ENV=production`, `APP_DEBUG=false`, the real `APP_KEY`, PostgreSQL credentials, and the internal tokenization service key.
 3. Validate the Compose configuration:
    `docker compose --env-file .env -f docker-compose.production.yml config`
 4. Build the images:
@@ -33,7 +33,7 @@ Do not bypass a failed security or database test to ship a release. Fix the find
 8. Verify the Laravel health endpoint through Nginx and verify the ML container health before opening external traffic.
 9. Confirm the queue worker is running and process at least one non-critical queued notification in staging before production traffic is enabled.
 
-Do not publish PostgreSQL or the ML service ports. Put TLS termination, DNS, WAF/rate limiting, and the public DNS name in front of Nginx (for example, a managed load balancer or reverse proxy). Enable HSTS only at the HTTPS edge after the hostname is confirmed to be HTTPS-only.
+Do not publish PostgreSQL or the tokenization service ports. Put TLS termination, DNS, WAF/rate limiting, and the public DNS name in front of Nginx (for example, a managed load balancer or reverse proxy). Enable HSTS only at the HTTPS edge after the hostname is confirmed to be HTTPS-only.
 
 ## Release procedure
 
